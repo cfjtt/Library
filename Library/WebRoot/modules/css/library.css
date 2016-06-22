@@ -1,0 +1,204 @@
+#wrapper {
+	background-color: #202020;
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	height: 100%;
+}
+
+.container-fluid {
+	padding: 0px;
+}
+
+::-webkit-scrollbar {
+	width: 0px;
+	height: 0px;
+}
+
+::-moz-scrollbar {
+	width: 0px;
+	height: 0px;
+}
+
+#top {
+	margin: 0px;
+	border: none;
+	padding: 0px;
+	height: 70px;
+}
+
+body {
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+}
+
+.titleColor {
+	color: white;
+}
+
+.navbar-side {
+	border: none;
+	background-color: #202020;
+	z-index: 1;
+	position: absolute;
+	left: 0;
+	width: 220px
+}
+
+.a:hover {
+	cursor: pointer;
+	color: white;
+}
+
+#user:hover {
+	text-decoration: none;
+	background: #202020;
+}
+
+.form-control {
+	height: 35px;
+	margin-top: 10px;
+	vertical-align: middle;
+	min-width: 90px;
+}
+
+#search {
+	font-size: 12px;
+	height: 25px;
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+}
+
+#search:hover {
+	background: #202020;
+}
+
+.glyphicon:hover {
+	cursor: pointer;
+}
+
+.navbar-left {
+	margin-top: 11px;
+	padding-left: 10px;
+	margin-right: 0px;
+	padding-right: 0px;
+}
+
+a {
+	color: white
+}
+
+a:hover {
+	color: white;
+	cursor: pointer;
+	text-decoration: none;
+}
+
+.header-left {
+	color: white;
+	margin-top: 12px;
+	margin-left: 20px;
+}
+
+.header-right {
+	margin-right: 30px;
+}
+
+.hover:hover {
+	cursor: pointer;
+}
+
+.dropdown-menu {
+	min-width: 120px;
+}
+
+#left {
+	width: 220px;
+	min-height: 800px;
+	margin-top: 69px;
+	padding: 0px;
+	overflow-x: hidden
+}
+
+#left .glyphicon-menu-down,#left  .glyphicon-menu-up {
+	float: right;
+}
+
+.input-group {
+	margin: 0 auto;
+}
+
+.modal-dialog {
+	max-width: 450px;
+}
+
+#myModalLabel {
+	color: black;
+}
+
+.content {
+	margin-left: 220px;
+	margin-top: 70px;
+	border: none;
+	padding: 0px;
+	min-width: 800px;
+	height: 100%;
+	color: black;
+}
+
+#page-wrapper {
+	height: 100%;
+	margin: 0px;
+	padding: 0px
+}
+
+#bookInfo {
+	height: 100%;
+	margin-left: 0px;
+	padding-left: 0px;
+}
+
+.panel-body {
+	padding-left: 1px;
+	padding-right: 0px;
+	height: 100%;
+}
+
+#tabs>ul>li>a {
+	color: black;
+}
+
+#tableLimit {
+	margin-right: 5px;
+	padding-left: 10px;
+	background-color: white;
+}
+
+th {
+	cursor: pointer;
+}
+
+.file-drop-zone-title {
+	font-size: 12px;
+}
+
+.fileinput-remove {
+	display: none;
+}
+
+td,th {
+	text-align: center;
+}
+
+#hot:hover {
+	color: red;
+}
+
+li {
+	list-style: none;
+	cursor: pointer;
+}
+#firstPage{
+	background-image: url("../images/0.jpg");
+}
+ 

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>图书信息详情</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="content-type" content="text/html; charset=UTF-8">
+</head>
+
+<body id="detail">
+	<div class="panel panel-danger">
+		<div class="panel-heading">书籍详细页面</div>
+		<div id="tabs">
+			<ul class=" nav nav-tabs">
+				<li role="presentation" class="active"><a click id="borrowBook"><span
+						class="glyphicon glyphicon-book"></span> 书目信息</a></li>
+			</ul>
+		</div>
+		<div class="panel-body" style="padding:0px;">
+			<div class="row">
+				<div class="col-xs-4 col-xs-offset-1">
+					<div class="row">
+						<div class="col-xs-4" style="text-align:right;padding-right:0px;">
+							题名/责任者:</div>
+						<div class="col-xs-8">{{item.bookName}}/{{item.autor}} 编著</div>
+					</div>
+				</div>
+
+			</div>
+			<div class="row">
+				<div class="col-xs-4 col-xs-offset-1">
+					<div class="row">
+						<div class="col-xs-4" style="text-align:right;padding-right:0px;">
+							出版发行项:</div>
+						<div class="col-xs-8">{{item.publishHouse}},{{
+							item.publishTime | date : "yyyy-MM" }}</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-4 col-xs-offset-1">
+					<div class="row">
+						<div class="col-xs-4" style="text-align:right;padding-right:0px;">
+							定价:</div>
+						<div class="col-xs-8">{{item.price}}</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-4 col-xs-offset-1">
+					<div class="row">
+						<div class="col-xs-4" style="text-align:right;padding-right:0px;">
+							个人责任人:</div>
+						<div class="col-xs-8">{{item.autor}} 编著</div>
+					</div>
+
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-4 col-xs-offset-1">
+					<div class="row">
+						<div class="col-xs-4" style="text-align:right;padding-right:0px;">
+							个人责任人:</div>
+						<div class="col-xs-8">{{item.autor}} 编著</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-4 col-xs-offset-1">
+					<div class="row">
+						<div class="col-xs-4" style="text-align:right;padding-right:0px;">
+							索引号:</div>
+						<div class="col-xs-8">{{item.bookId}}</div>
+					</div>
+
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-10">
+					<div class="row" style="margin-right:25px;">
+						<div class="col-xs-2 col-xs-offset-1"
+							style="text-align:right;padding-right:0px;">详细信息:</div>
+						<div class="col-xs-8" ng-bind-html="item.description" style="">
+
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<hr />
+			<!-- 评价 -->
+			<div class="row">
+				<div class="col-xs-6 col-xs-offset-1">
+					总体评价:<span
+						class="{{item.evaluationNum==0 ? 'glyphicon glyphicon-star-empty' : (((item.star) > 0)  ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty')}}"></span>
+					<span
+						class="{{item.evaluationNum==0 ? 'glyphicon glyphicon-star-empty' : (((item.star) > 1)  ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty')}}"></span>
+					<span
+						class="{{item.evaluationNum==0 ? 'glyphicon glyphicon-star-empty' : (((item.star) > 2)  ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty')}}"></span>
+					<span
+						class="{{item.evaluationNum==0 ? 'glyphicon glyphicon-star-empty' : (((item.star) > 3)  ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty')}}"></span>
+					<span
+						class="{{item.evaluationNum==0 ? 'glyphicon glyphicon-star-empty' : (((item.star) > 4)  ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty')}}"></span>
+					<span title="参与评价人数">({{item.evaluationNum}})</span> <span
+						id="myCommit" ng-init="myStar=0">我的评价: <span
+						class="{{ (myStar > 0)  ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty'}}"></span> <span
+						class=" {{(myStar > 1)  ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty'}}"></span> <span
+						class=" {{(myStar > 2)  ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty'}}"></span> <span
+						class=" {{(myStar > 3)  ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty'}}"></span> <span
+						class=" {{(myStar > 4)  ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty'}}"></span>
+
+					</span> <span>{{errorMessage}}</span>
+
+				</div>
+				<div class="col-xs-1" style="text-align:left">
+					<button class="form-control btn btn-default"
+						ng-click="sureSave(item)"
+						style="margin-top:0px;margin-bottom:5px;padding-top:0px;padding-bottom:0px;">收藏</button>
+				</div>
+			</div>
+
+			<!-- 馆藏信息 -->
+			<div class="row">
+				<div class="col-xs-8 col-xs-offset-1">
+					<div id="tabs">
+						<ul class=" nav nav-tabs">
+							<li role="presentation" class="active"><a click
+								id="bookInfoMessage"><span
+									class="glyphicon glyphicon-envelope"></span> 馆藏信息</a></li>
+							<li role="presentation"><a click id="orderMessage"><span
+									class="glyphicon glyphicon-earphone"></span> 预约申请</a></li>
+							<li role="presentation"><a click id="commit"><span
+									class="glyphicon glyphicon-comment"></span> 图书评论</a></li>
+						</ul>
+					</div>
+				</div>
+
+			</div>
+			<!-- 馆藏信息 -->
+			<div class="row" ng-show="showBookInfo" ng-init="showBookInfo=true">
+				<div class="col-xs-8 table-responsive col-xs-offset-1">
+					<table
+						class="table table-striped table-hover table-condensed danger">
+						<thread>
+						<tr>
+							<th ng-click="col='bookId';desc=!desc">索引号<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+							<th ng-click="col='placeName';desc=!desc">校区-馆藏地<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+							<th ng-click="col='availNum';desc=!desc">书籍状态<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+						</tr>
+						</thread>
+						<tbody>
+							<tr>
+								<td>{{item.bookId}}</td>
+								<td>{{item.placeName}}</td>
+								<td>{{item.availNum>0 ? "可借" : "在编"}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<!-- 预约申请 -->
+			<div class="row" ng-show="showOrder">
+				<div class="col-xs-8 col-offset-1">
+					<div class="row">
+						<div class="col-xs-3 col-xs-offset-6">
+						<div class="form-group" style="margin-bottom: 2px;">
+							<input type="text" class="form-control" placeholder="请输入借书证"
+								ng-model="loadId">
+
+						</div>
+						
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-3 col-xs-offset-6">
+							<div class="form-group" style="margin-bottom: 2px;">
+							<input type="text" class="form-control" placeholder="请输入图书索引号"
+								ng-model="bookId" >
+						</div>
+						<div class="row">
+							<div class="col-xs-3">
+								{{bookInfoMessage}}
+							</div>
+						</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-1 col-xs-offset-6">
+							<button class="form-control btn btn-default" style="margin-left:30px;" ng-click="sureOrder(item)">确定</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<!-- 图书评论 -->
+			<div class="row" ng-show="showCommit">
+				<div class="row">
+					<div class="col-xs-8 col-xs-offset-1" style="max-height: 400px;overflow:scroll;">
+							<span>{{isNull}}</span>
+						<ul class="list-group">
+							<li class="list-group-item" style="border:1px solid #ebccd1;"
+									ng-repeat="evals in evalutions | filter:test">
+								<h5 class="list-group-item-heading">
+									 <img   ng-src="{{'img.do?loadId='+evals.loadId}}" style="max-width:30px;max-height:30px;"><a style="color:blue;">{{evals.realName}}:</a>
+								</h5>
+								<div class="row">
+									<div class="col-xs-8 col-xs-offset-1" ng-bind-html="evals.description | to_trusted">
+									</div>
+								</div>	
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-8 col-xs-offset-1">
+						<script type="text/plain" id="myEditor" style="min-height:150px;max-height:150px;min-width: 100%;">
+						</script>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-1 col-xs-offset-6">
+						<button class="form-control btn btn-default" style="margin-left:20px;" ng-click="sureCommit(item)">确定</button>
+					</div>
+					<div class="col-xs-1">
+						<button class="form-control btn btn-default" style="margin-left:20px;">取消</button>
+					</div>
+				</div>
+			</div>
+			
+			<!-- 借阅趋势 -->
+			<div class="row">
+				<div class="row">
+					<div class="col-xs-8 col-xs-offset-1">
+						<div id="tabs">
+						<ul class=" nav nav-tabs">
+							<li role="presentation" class="active"><a click
+								id="bookInfoMessage"><span
+									class="glyphicon glyphicon-signal"></span> 借书趋势</a></li>
+						</ul>
+					</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-8 col-xs-offset-1" id="charts" style="height:200px;">
+					</div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+
+	<!-- 模态框 -->
+	<div class="modal fade " id="alert" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<a class="modal-title lead " id="myModalLabel">提示</a>
+				</div>
+				<div class="modal-body" id="alertMessage">{{message}}</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" aria-hidden="true"
+						data-dismiss="modal">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

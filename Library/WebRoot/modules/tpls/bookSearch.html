@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>简单检索</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="content-type" content="text/html; charset=UTF-8">
+</head>
+
+<body>
+	<div class="panel panel-danger">
+		<div class="panel-heading">书目检索</div>
+		<div class="panel-body" style="padding:0px;">
+			<div class="row">
+				<div class="col-xs-8 col-xs-offset-3">
+					<form class="navbar-form navbar-left" role="search" method="post"
+						novalidate="novalidate">
+						<div class="form-group" ng-init="condition1='bookId'">
+							<select class="form-control" ng-model="condition1">
+								<option value="bookId">书号</option>
+								<option value="bookName">图书名字</option>
+								<option value="autor">作者</option>
+								<option value="publishHome">出版社</option>
+							</select>
+						</div>
+						<div class="form-group" ng-init="condition2='1'">
+							<select class="form-control" ng-model="condition2">
+								<option value="1">前方匹配</option>
+								<option value="2">完全匹配</option>
+								<option value="3">任意匹配</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" placeholder="请输入查询内容.."
+								name="bookName" ng-model="condition3">
+						</div>
+						<button type="button" class="btn btn-default form-control"
+							ng-click="searchBookInfo()">查询</button>
+					</form>
+				</div>
+			</div>
+
+			<!-- 结果展示 -->
+			<div class="row" style="border:none;">
+				<div class="col-xs-10 col-xs-offset-1">
+					<div class="row" ng-show="items.length>0">
+						<div class="col-xs-3 col-xs-offset-9">
+							<input type="text" ng-model="test"  class="form-control" placeholder="在结果中查找">
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-xs-12">
+							<ul class="list-group">
+								<li class="list-group-item" style="border:1px solid #ebccd1;"
+									ng-repeat="item in items | filter:test">
+									<h4 class="list-group-item-heading">
+										<a ui-sref="detailBookInfo({bookinfo:item})"  style="color:blue;" ui-sref-opts="{reload:true}">{{item.bookName}}</a><span
+											style="font-size:13px;"> {{item.bookId}}</span>
+									</h4>
+									<div class="row">
+										<div class="col-xs-3">
+											<p class="list-group-item-text">&nbsp;&nbsp;{{item.autor}}</p>
+										</div>
+										<div class="col-xs-2 col-xs-offset-7"
+											style="text-align:right;">
+											<p class="list-group-item-text">{{item.bookTypeName}}</p>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-4">
+											<p class="list-group-item-text">&nbsp;&nbsp;{{item.publishHouse}}
+												{{item.publishTime | date:'yyyy-MM'}}</p>
+										</div>
+										<div class="col-xs-2 col-xs-offset-6"
+											style="text-align: right">
+											<p class="list-group-item-text disabled">馆藏副本:{{item.totalNum}}</p>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-3">
+											<p class="list-group-item-text" style="font-size:12px;" title="总体评分">
+												&nbsp;&nbsp; 
+												<span class="{{item.evaluationNum==0 ? 'glyphicon glyphicon-star-empty' : (((item.star/item.evaluationNum) > 0)  ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty')}}"></span>
+												<span class="{{item.evaluationNum==0 ? 'glyphicon glyphicon-star-empty' : (((item.star/item.evaluationNum) > 1)  ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty')}}"></span> 
+												<span
+													class="{{item.evaluationNum==0 ? 'glyphicon glyphicon-star-empty' : (((item.star/item.evaluationNum) > 2)  ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty')}}"></span>
+													 <span
+													class="{{item.evaluationNum==0 ? 'glyphicon glyphicon-star-empty' : (((item.star/item.evaluationNum) > 3)  ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty')}}"></span>
+													 <span
+													class="{{item.evaluationNum==0 ? 'glyphicon glyphicon-star-empty' : (((item.star/item.evaluationNum) > 4)  ? 'glyphicon glyphicon-star' : 'glyphicon glyphicon-star-empty')}}"></span> 
+													<span title="参与评价人数">({{item.evaluationNum}})</span>
+												<a style="color:blue" ng-mouseenter="showTable=true"
+													ng-mouseleave="showTable=false;">馆藏<span
+													class="glyphicon glyphicon-triangle-bottom"></span></a>
+											</p>
+										</div>
+										<div class="col-xs-2 col-xs-offset-7"
+											style="text-align:right;">
+											<p class="list-group-item-text">可用副本:{{item.availNum}}</p>
+										</div>
+									</div> <!-- 馆藏地址 -->
+									<div class="row" ng-show="showTable">
+										<div class="col-xs-12 table-responsive" style="padding:0px;">
+											<table
+												class="table table-striped table-hover table-condensed danger">
+												<thread>
+												<tr>
+													<th ng-click="col='bookId';desc=!desc">索引号<span
+														class="glyphicon glyphicon-resize-vertical"></span></th>
+													<th ng-click="col='placeName';desc=!desc">校区-馆藏地<span
+														class="glyphicon glyphicon-resize-vertical"></span></th>
+													<th ng-click="col='availNum';desc=!desc">书籍状态<span
+														class="glyphicon glyphicon-resize-vertical"></span></th>
+												</tr>
+												</thread>
+												<tbody>
+													<tr>
+														<td>{{item.bookId}}</td>
+														<td>{{item.placeName}}</td>
+														<td>{{item.availNum>0 ? "可借" : "在编"}}</td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</li>
+
+							</ul>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+
+
+			<!-- 分页 -->
+			<div class="row" ng-show="totalPage>1" style="margin-right:90px;">
+				<!-- 分页 -->
+				<nav class="navbar-default nav navbar-right" id="tableLimit" >
+
+					<ul class="pager">
+
+						<li><a style="color:#428bca;font-weight: bold;"
+							ng-click="changePage('up')">上一页</a></li>
+						<li><a style="color:#428bca;font-weight: bold;"><span
+								style="color:red" ng-init="startPage=1;totalPage=1">{{startPage}}</span>/<span
+								style="color:black;">{{totalPage}}</span></a></li>
+						<li><a style="color:#428bca;font-weight: bold;"
+							ng-click="changePage('down')">下一页</a></li>
+						<li><span>到第<input type="number"
+								style="max-width: 40px;max-height: 25px;"ng-blur="changePage('userDefined')"
+								ng-model="defined">页
+						</span></li>
+					</ul>
+
+				</nav>
+			</div>
+		</div>
+
+
+	</div>
+
+</body>
+</html>

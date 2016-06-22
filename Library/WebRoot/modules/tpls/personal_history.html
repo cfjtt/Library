@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>借阅历史</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="content-type" content="text/html; charset=UTF-8">
+
+<!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+
+</head>
+
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-12" style="padding-left:0px;">
+				<div style="color:red;margin-left:500px;">{{isNull}}</div>
+				<!-- 显示当前借阅信息 -->
+				<table class="table table-striped table-hover table-condensed"
+					ng-show="isValue">
+					<thread>
+					<tr>
+						<th>序列</th>
+						<th ng-click="col='bookId';desc=!desc">索引号<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th ng-click="col='bookName';desc=!desc">书名<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th ng-click="col='autor';desc=!desc">作者<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th ng-click="col='startTime';desc=!desc">借阅时间<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th ng-click="col='endTime';desc=!desc">结束时间<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+					</tr>
+					</thread>
+					<tbody>
+						<tr ng-repeat="item in Items |orderBy:col:desc">
+							<td>{{$index+1}}</td>
+							<td>{{item.bookId}}</td>
+							<td>{{item.bookName}}</td>
+							<td>{{item.autor}}</td>
+							<td>{{item.startTime | date:"yyyy-MM-dd"}}</td>
+							<td>{{item.endTime | date:"yyyy-MM-dd"}}</td>
+						</tr>
+					</tbody>
+
+				</table>
+			</div>
+		</div>
+
+		
+	</div>
+</body>
+</html>

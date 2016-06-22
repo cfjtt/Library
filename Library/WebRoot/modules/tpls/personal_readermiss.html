@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>读者挂失</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="content-type" content="text/html; charset=UTF-8">
+</head>
+
+<body>
+	<div class="container">
+		<div class="row" style="height:50px;">
+			<div class="col-xs-5 col-xs-offset-3" style="color:red">
+				<br /> &nbsp;&nbsp;&nbsp;借书证挂失,此借书证将不可使用,同时此系统也将无法登录
+			</div>
+		</div>
+		<div class="row">
+			<br />
+			<div class="col-xs-3 col-xs-offset-4">
+				<div class="form-group">
+					<input type="text" class="form-control" placeholder="请输入借书证" ng-model="loadId">
+					
+				</div>
+			</div>
+			<div class="col-xs-1">
+				<button type="button" class="btn btn-default form-control"
+					ng-click="sureReaderMiss()" style="width:30px;">确定</button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-3 col-xs-offset-4">
+				{{readerMessage}}
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>热门借阅</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+
+  </head>
+  
+  <body>
+     <div class="panel panel-danger">
+		<div class="panel-heading">热门评价</div>
+		<div class="panel-body" style="padding:0px;">
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="row" style="border:1px solid #ebccd1">
+						<ul class="list-unstyled list-inline" style="padding-left:10px;">
+							<li ng-repeat="firstClass in firstClasses" style="text-align:center;padding-left:12px;padding-right:12px;">
+								<a style="color:black" ng-click="selectClass(firstClass.bookClassId)" id="hot">{{firstClass.bookClass}}</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-12 table-responsive">
+					<table
+						class="table table-striped table-hover table-condensed danger">
+						<thread>
+						<tr>
+							<th ng-click="col='bookName';desc=!desc">题名<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+							<th ng-click="col='autor';desc=!desc">责任者<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+							<th ng-click="col='publishTime';desc=!desc">出版信息<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+							<th ng-click="col='bookId';desc=!desc">索引号<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+							<th ng-click="col='totalNum';desc=!desc">馆藏<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+							<th ng-click="col='borrowTimes';desc=!desc">借阅次数<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+							<th ng-click="col='evaluationNum';desc=!desc">评价人数<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+						</tr>
+						</thread>
+						<tbody>
+							<tr ng-repeat="item in items | orderBy:col:desc">
+								<td><a style="color:blue" ui-sref="detailBookInfo({bookinfo:item})" ui-sref-opts="{reload:true}">{{item.bookName}}</a></td>
+								<td>{{item.autor}}</td>
+								<td>{{item.publishHouse}} {{item.publishTime | date : 'yyyy-MM'}}</td>
+								<td>{{item.bookId}}</td>
+								<td>{{item.totalNum}}</td>
+								<td>{{item.borrowTimes}}</td>
+								<td>{{item.evaluationNum}}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+  </body>
+</html>

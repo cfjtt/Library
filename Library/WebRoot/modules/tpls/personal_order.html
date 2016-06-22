@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>预约信息</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="content-type" content="text/html; charset=UTF-8">
+</head>
+
+<body>
+	<div class="container">
+		<div class="row">
+			<div class="col-xs-12" style="padding-left:0px;">
+				<div style="color:red;margin-left:500px;">{{isNull}}</div>
+				<!-- 显示当前借阅信息 -->
+				<table class="table table-striped table-hover table-condensed"
+					ng-show="isValue">
+					<thread>
+					<tr>
+						<th>序列</th>
+						<th ng-click="col='bookId';desc=!desc">索引号<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th ng-click="col='bookName';desc=!desc">书名<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th ng-click="col='autor';desc=!desc">作者<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th ng-click="col='place';desc=!desc">馆藏地<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th ng-click="col='startTime';desc=!desc">预约时间<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th ng-click="col='endTime';desc=!desc">取消预约<span></span></th>
+						
+					</tr>
+					</thread>
+					<tbody>
+						<tr ng-repeat="item in Items |orderBy:col:desc">
+							<td>{{$index+1}}</td>
+							<td>{{item.bookId}}</td>
+							<td>{{item.bookName}}</td>
+							<td>{{item.autor}}</td>
+							<td>{{item.placeName}}</td>
+							<td>{{item.startTime | date:"yyyy-MM-dd"}}</td>
+							<td>
+								<span class="glyphicon glyphicon-remove-circle"></span><a
+								style="color:black" ng-click="cancleOrder(item,$index)">&nbsp;取消预约</a>
+							</td>
+						</tr>
+					</tbody>
+
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>读者信息管理</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="content-type" content="text/html; charset=UTF-8">
+</head>
+
+<body>
+	<div class="panel panel-danger">
+		<div class="panel-heading">用户信息管理</div>
+		<div id="tabs">
+			<ul class=" nav nav-tabs">
+				<li role="presentation" class="active" id="addUserLi"><a click id="addUser"><span
+						class="glyphicon glyphicon-plus"></span> 添加用户</a></li>
+				<li role="presentation"><a click id="modifyUser"><span
+						class="glyphicon glyphicon-pencil"></span> 修改用户</a></li>
+
+			</ul>
+		</div>
+		<div class="panel-body">
+			<div ng-show="addUser">
+				<form method="post" role="form" action="" name="form"
+					novalidate="novalidate">
+					<div class="row">
+						<div class="col-md-4 col-md-offset-4 ">
+							<input type="text" class="form-control" placeholder="证件号"
+								ng-model="loadId" required name="loadId" ng-blur="checkIsExit()">
+							<span class="error"
+								ng-show="form.$dirty&&form.loadId.$error.required"><i
+								class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4 col-md-offset-4 ">
+							<input type="text" class="form-control" placeholder="真实名字"
+								ng-model="realName" required name="realName"> <span
+								class="error"
+								ng-show="form.$dirty&&form.realName.$error.required"><i
+								class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4 col-md-offset-4">
+							<input type="text" class="form-control" placeholder="电话"
+								ng-model="phone" required name="phone"> <span
+								class="error" ng-show="form.$dirty&&form.phone.$error.required"><i
+								class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+						</div>
+					</div>
+					<!-- 选择角色的权限  只有超级管理员-->
+					<div class="row" ng-show="isSuperRoot">
+						<div class="col-md-4 col-md-offset-4">
+							<select class="form-control" ng-model="selectRoot"
+								ng-init="selectRoot=''" name="root" id="isroot">
+								<option value="">请选择用户权限</option>
+								<option value="1" ng-selected="selectRoot==1">管理员</option>
+								<option value="2" ng-selected="selectRoot==2">普通用户</option>
+							</select>
+							<span class="error"
+								ng-show="form.$dirty&&form.root.$error.required"><i
+								class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+						</div>
+					</div>
+
+					<!-- 选择用户的状态，是冻结还是激活 -->
+					<div class="row" ng-show="isAvailShow">
+						<div class="col-md-4 col-md-offset-4">
+							<select class="form-control" ng-model="isAvail"
+								ng-init="isAvail=''" name="isAvail" id="avail">
+								<option value="">请选择用户状态</option>
+								<option value="1" ng-selected="isAvail==1">冻结</option>
+								<option value="0" ng-selected="isAvail==0">激活</option>
+							</select>
+							<span class="error"
+								ng-show="form.$dirty&&form.isAvail.$error.required"><i
+								class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+						</div>
+					</div>
+					<div class="row" style="margin-top:10px;">
+						<div class="col-md-4 col-md-offset-9">
+							<button class="btn btn-default" type="button"
+								ng-click="addUserInfo()">确定</button>
+							<button class="btn btn-default" type="reset">取消</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div ng-show="isModifyUserShow">
+				<!-- 修改用户(修改，删除) -->
+				<div class="row">
+					<div class="col-xs-2 col-xs-offset-1">
+						<span class="glyphicon glyphicon-eye-open" style="color:#428bca;">
+							<a style="color:#428bca;font-weight: bold;"
+							ng-click="searchAllUser()">查看全部用户</a>
+						</span>
+					</div>
+					<div class="col-xs-2">
+						<span class="glyphicon glyphicon-eye-close" style="color:#428bca;">
+							<a style="color:#428bca;font-weight: bold;"
+							ng-click="searchSomeUser()">查找指定用户</a>
+						</span>
+					</div>
+				</div>
+
+				<!-- 点击查找指定用户时展示 -->
+				<div class="row" ng-show="searchByCondition">
+					<div class="col-md-12">
+						<form class="navbar-form navbar-left" role="search" method="post"
+							novalidate="novalidate">
+							<div class="form-group" ng-init="superRoot='AllUser'"
+								ng-show="isSuperRoot">
+								<select class="form-control" ng-model="superRoot">
+									<option value="2">普通用户</option>
+									<option value="1">管理员</option>
+									<option value="AllUser" selected>全部</option>
+								</select>
+							</div>
+							<div class="form-group" ng-init="condition='loadId'">
+								<select class="form-control" ng-model="condition">
+									<option value="loadId" selected>借书证</option>
+									<option value="realName">姓名</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="请输入查询内容.."
+									name="searchContent" ng-model="searchContent">
+							</div>
+							<button type="button" class="btn btn-default form-control"
+								ng-click="modifyUser()">查询</button>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<!-- 表格展示用户信息 -->
+			<div class="row" ng-show="isClick">
+				<div class="row">
+					<div class="col-xs-12">
+						<table class="table table-striped table-hover table-condensed"
+							style="margin-left:15px;">
+							<thread>
+							<tr>
+								<th>序列</th>
+								<th ng-click="col='loadId';desc=!desc">借书证<span
+									class="glyphicon glyphicon-resize-vertical"></span></th>
+								<th ng-click="col='realName';desc=!desc">名字<span
+									class="glyphicon glyphicon-resize-vertical"></span></th>
+								<th ng-click="col='root';desc=!desc">角色类型<span
+									class="glyphicon glyphicon-resize-vertical"></span></th>
+								<th ng-click="col='phone';desc=!desc">手机号码<span
+									class="glyphicon glyphicon-resize-vertical"></span></th>
+								<th ng-click="col='idCard';desc=!desc">身份证<span
+									class="glyphicon glyphicon-resize-vertical"></span></th>
+								<th>操作</th>
+							</tr>
+							</thread>
+							<tbody>
+								<tr ng-repeat="item in items |orderBy:col:desc">
+									<td>{{$index+1}}</td>
+									<td>{{item.loadId}}</td>
+									<td>{{item.realName}}</td>
+									<td>{{item.root ==1 ? "管理员" : "普通用户"}}</td>
+									<td>{{item.phone}}</td>
+									<td>{{item.idCard}}</td>
+									<td><span class="glyphicon glyphicon-pencil"></span><a
+										style="color:black" ng-click="modifyUserInfo(item,$index)">修改</a>|<span
+										class="glyphicon glyphicon-trash"></span><a
+										style="color:black" ng-click="deleteUserInfo(item,$index)">删除</a></td>
+								</tr>
+							</tbody>
+
+						</table>
+					</div>
+				</div>
+				<div class="row">
+					<!-- 分页 -->
+					<nav class="navbar-default nav navbar-right" id="tableLimit"
+						ng-init="searchType='All'" ng-model="searchType">
+						<ul class="pager" style="margin-right:25px;">
+							<li><a style="color:#428bca;font-weight: bold;"
+								ng-click="changePage('up',searchType)">上一页</a></li>
+							<li><a style="color:#428bca;font-weight: bold;"><span
+									style="color:red" ng-init="startPage=1;totalPage=1">{{startPage}}</span>/<span
+									style="color:black;">{{totalPage}}</span></a></li>
+							<li><a style="color:#428bca;font-weight: bold;"
+								ng-click="changePage('down',searchType)">下一页</a></li>
+							<li><span>到第<input type="number"
+									style="max-width: 40px;max-height: 20px;"
+									ng-blur="changePage('userDefined',searchType)"
+									ng-model="defined">页
+							</span></li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- 模态框 -->
+	<div class="modal fade " id="alert" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<a class="modal-title lead " id="myModalLabel">提示</a>
+				</div>
+				<div class="modal-body">{{message}}</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" aria-hidden="true"
+						data-dismiss="modal">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

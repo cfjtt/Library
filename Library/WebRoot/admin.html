@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang='zh-CN' ng-app="myApp" ng-controller="indexCtrl">
+<head>
+<title>管理员界面</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="modules/css/bootstrap.min.css" />
+<link rel="stylesheet" href="modules/css/library.css" />
+<link rel="stylesheet" href="modules/css/basic.css" />
+<link rel="stylesheet" href="modules/css/font-awesome.css" />
+<link rel="stylesheet" href="modules/css/custom.css" />
+<!-- Google-Code代码高亮CSS -->
+<link rel="stylesheet" href="modules/css/prettify.css" />
+<link rel="stylesheet" href="modules/css/umeditor.min.css" />
+<link rel="stylesheet" href="modules/css/fileinput.min.css" media="all"/>
+<script type="text/javascript" src="modules/dist/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="modules/dist/fileinput.js"></script>
+<script type="text/javascript" src="modules/dist/fileinput_locale_zh.js"></script>
+<script type="text/javascript" src="modules/dist/bootstrap.min.js"></script>
+<script type="text/javascript" src="modules/dist/angular.min.js"></script>
+<script type="text/javascript" src="modules/dist/angular-ui-router.js"></script>
+<script type="text/javascript" src="modules/dist/highcharts.js"></script>
+<script type="text/javascript" src="modules/dist/highcharts-more.js"></script>
+<script type="text/javascript" src="modules/dist/data.js"></script>
+<script type="text/javscript" src="modules/dist/drilldown.js"></script>
+<!-- 左边导航栏controller -->
+
+</head>
+
+<body>
+	<div class="container-fluid" id="container">
+		<!-- head -->
+		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"
+			id="top" style="display: block">
+			<div class="navbar-header header-left">
+				<a ui-sref="hotCharts" ui-sref-opts="{reload:true}"><h4>图书借阅管理系统</h4></a>
+			</div>
+			<div class="collapse navbar-collapse header-right">
+				<!-- 搜索 
+				<ul class="nav navbar-nav">
+					<li><input type="text" class="form-control"
+						placeholder="查找书籍.." id="search"></li>
+					<li><a href="#"
+						style="width:10px;height:10px;padding-left:2px;" id="search">
+							<span class="glyphicon glyphicon-search"
+							style="color:white;padding:0px;"></span>
+					</a></li>
+				</ul>
+				-->
+				<!-- 历史 
+				<div class="nav navbar-nav navbar-left" ng-show="show">
+					<span class="glyphicon glyphicon-time " style="color:white"></span>
+					<a class="hover" href="">历史</a>
+					<div class="history"></div>
+				</div>
+				-->
+				<!-- 收藏 
+				<div class="nav navbar-nav navbar-left" ng-show="show">
+					<span class="glyphicon glyphicon-heart-empty " style="color:white"></span>
+					<a class="hover" href="">收藏</a>
+					<div class="save"></div>
+				</div>
+				-->
+				<!-- 用户 -->
+				<div class="nav navbar-nav navbar-left dropdown" ng-show="show">
+					<a class="dropdown-toggle glyphicon glyphicon-user"
+						data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"
+						id="user" style="color:white"><span for="user">{{name}}</span><span
+						class="glyphicon glyphicon-menu-down"
+						style="color:white;font-size:2px;"></span> </a>
+
+					<ul class="dropdown-menu" aria-labelledby="user">
+						<li role="separator" class="divider"></li>
+						<li><a ui-sref="personal" ui-sref-opts="{reload:true}" class="glyphicon glyphicon-user">个人中心</a></li>
+						<li><a href="#" class="glyphicon glyphicon-log-out "
+							ng-click="exit()">退出</a></li>
+					</ul>
+				</div>
+
+				<!-- 用户未登录 -->
+				<div class="nav navbar-nav navbar-left" ng-show="!show">
+					<span class="glyphicon glyphicon-user" style="color:white"></span>
+					<a class="hover" id="login" data-toggle="modal"
+						data-target="#myModal" ng-click="login()">登录</a> <span>|</span> <a
+						class="hover" id="regist" data-toggle="modal"
+						data-target="#myModal" ng-click="regist()">注册</a>
+				</div>
+			</div>
+
+		</nav>
+
+		<div class="collapse navbar-collapse">
+			<!-- 左边导航栏 -->
+			<nav class="navbar-default navbar-side" role="navigation" id="left">
+				<div class="collapse sidebar-collapse">
+					<ul class="nav" id="main-menu">
+						<li><a > <i
+								class="glyphicon glyphicon-search"></i>书目检索<span
+								class="glyphicon glyphicon-menu-down"></span>
+						</a>
+							<ul class="nav nav-second-level collapse">
+								<li><a ui-sref="bookEasySearch" ui-sref-opts="{reload:true}"><i class="glyphicon glyphicon-eye-open"></i>简单检索</a></li>
+								</li>
+							</ul></li>
+						<li><a> <i
+								class="glyphicon glyphicon-search"></i>热门推荐<span
+								class="glyphicon glyphicon-menu-down"></span></a>
+							<ul class="nav nav-second-level collapse">
+								<li><a ui-sref="hotBorrows" ui-sref-opts="{reload:true}"><i class="glyphicon glyphicon-stats"></i>热门借阅</a></li>
+								<li><a ui-sref="hotCommits" ui-sref-opts="{reload:true}"><i class="glyphicon glyphicon-edit"></i>热门评价</a></li>
+								<li><a ui-sref="hotSave" ui-sref-opts="{reload:true}"><i
+										class="glyphicon glyphicon-star-empty"></i>热门收藏</a></li>
+							</ul></li>
+						<li><a ui-sref="classify" ui-sref-opts="{reload:true}"><i class="glyphicon glyphicon-th-list"></i>分类浏览
+						</a></li>
+						<li><a ui-sref="classify" ui-sref-opts="{reload:true}"><i class="glyphicon glyphicon-earphone"></i>新书通告</a></li>
+						<li><a><i class="glyphicon glyphicon-send"></i>信息发布<span
+								class="glyphicon glyphicon-menu-down"></span></a>
+							<ul class="nav nav-second-level">
+								<li><a ui-sref="OrderRelease" ui-sref-opts="{reload:true}"><i
+										class="glyphicon glyphicon-modal-window"></i>预约到书</a></li>
+								<li><a ui-sref="OverDateRelease" ui-sref-opts="{reload:true}"><i class="glyphicon glyphicon-alert"></i>超期欠款</a></li>
+								<li><a ui-sref="OverDatePush" ui-sref-opts="{reload:true}"><i
+										class="glyphicon glyphicon-exclamation-sign"></i>超期催还</a></li>
+							</ul></li>
+						
+						<li ng-show="admin"><a><i class="glyphicon glyphicon-cog"></i>系统信息管理<span
+								class="glyphicon glyphicon-menu-down"></span></a>
+							<ul class="nav nav-second-level collapse">
+								<li><a ui-sref="bookInfo" ui-sref-opts="{reload :true}"><i
+										class="glyphicon glyphicon-book"></i>图书信息管理</a></li>
+								<li><a ui-sref="userInfo" ui-sref-opts="{reload:true}"><i
+										class="glyphicon glyphicon-user"></i>读者信息管理</a></li>
+								<li><a ui-sref="borrowInfo" ui-sref-opts="{reload:true}"><i
+										class="glyphicon glyphicon-tags"></i>图书借阅管理</a></li>
+								<li><a ui-sref="punish" ui-sref-opts="{reload:true}"><i
+										class="glyphicon glyphicon-exclamation-sign"></i>罚金标准管理</a></li>
+								<li><a ui-sref="reportForm" ui-sref-opts="{reload:true}"><i
+										class="glyphicon glyphicon-list-alt"></i>报表统计</a></li>
+							</ul></li>
+						</li>
+						<li ng-show="isLogin"><a ui-sref="personal" ui-sref-opts="{reload :true}"><i class="glyphicon glyphicon-user"></i>我的图书馆</a></li>
+					</ul>
+				</div>
+
+			</nav>
+		</div>
+
+		<!-- content -->
+		<div class="content" ui-view style="min-height: 800px;max-height: 800px;overflow: scroll;" ></div>
+	</div>
+	</div>
+
+
+	<!-- 模态框 -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<a class="modal-title lead " id="myModalLabel">{{operation}}</a>
+				</div>
+				<div class="modal-body">
+					<div ng-show="showlogin">
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="证件号"
+								ng-model="userinfo.loadId" style="width: 280px;" />
+						</div>
+						<div class="input-group">
+							<input type="password" class="form-control" placeholder="密码"
+								ng-model="userinfo.password" style="width: 280px;" />
+						</div>
+
+					</div>
+					<div ng-show="showregist">
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="证件号"
+								ng-model="userinfo.load" style="width: 280px;"
+								ng-blur="checkIsExit()" />
+						</div>
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="用户名"
+								ng-model="userinfo.username" style="width: 280px;" />
+						</div>
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="真实姓名"
+								ng-model="userinfo.realname" style="width: 280px;" />
+						</div>
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="身份证"
+								ng-model="userinfo.IdCard" style="width: 280px;" />
+						</div>
+						<div class="input-group">
+							<input type="number" class="form-control" placeholder="手机号码"
+								ng-model="userinfo.telphone" style="width: 280px;" />
+						</div>
+						<div class="input-group">
+							<input type="password" class="form-control" placeholder="密码"
+								ng-model="userinfo.pwd" style="width: 280px;" />
+						</div>
+						<div class="input-group">
+							<input type="password" class="form-control" placeholder="确认密码"
+								ng-model="userinfo.againpassword" style="width: 280px;" />
+						</div>
+
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" ng-click="sure()">
+						{{operation}}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 操作信息提示框 -->
+	<div class="modal fade " id="loginAlert" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<a class="modal-title lead " id="myModalLabel">提示</a>
+				</div>
+				<div class="modal-body">{{loginMessage}}</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" aria-hidden="true"
+						data-dismiss="modal">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="modules/dist/jquery.metisMenu.js"></script>
+	<script type="text/javascript" src="modules/dist/custom.js"></script>
+	<script type="text/javascript" src="modules/dist/umeditor.config.js"></script>
+	<script type="text/javascript" src="modules/dist/umeditor.js"></script>
+	<script type="text/javascript" src="modules/dist/lang/zh-cn/zh-cn.js"></script>
+	<script type="text/javascript" src="modules/js/login.js"></script>
+	<!-- 图书管理controller -->
+	<script type="text/javascript" src="modules/js/bookInfoController.js"></script>
+	<!-- 读者管理 -->
+	<script type="text/javascript" src="modules/js/userInfo.js"></script>
+	<!-- 借阅管理 -->
+	<script type="text/javascript" src="modules/js/borrowInfo.js"></script>
+
+	<!-- 罚金标准 -->
+	<script type="text/javascript" src="modules/js/punish.js"></script>
+	<!-- 个人信息中心(我的图书馆) -->
+	<script type="text/javascript" src="modules/js/personal.js"></script>
+	<!--个人信息中心(当前借阅信息)  -->
+	<script type="text/javascript" src="modules/js/personalBorrow.js"></script>
+	<!-- 书籍检索 -->
+	<script type="text/javascript" src="modules/js/bookEasySearch.js"></script>
+	<!-- 书籍详细信息查询 -->
+	<script type="text/javascript" src="modules/js/detailBookInfo.js"></script>
+	<!-- 热门借阅 -->
+	<script type="text/javascript" src="modules/js/hotBorrows.js"></script>
+	<!-- 热门评价 -->
+	<script type="text/javascript" src="modules/js/hotCommits.js"></script>
+	<!-- 热门收藏 -->
+	<script type="text/javascript" src="modules/js/hotSave.js"></script>
+	<!-- 分类浏览 -->
+	<script type="text/javascript" src="modules/js/classify.js"></script>
+	<!-- 预约到书 -->
+	<script type="text/javascript" src="modules/js/OrderRelease.js"></script>
+	<!-- 超期欠款 -->
+	<script type="text/javascript" src="modules/js/OverDateRelease.js"></script>
+	<!-- 超期催还 -->
+	<script type="text/javascript" src="modules/js/OverDatePush.js"></script>
+	<!-- 报表管理 -->
+	<script type="text/javascript" src="modules/js/reportForm.js"></script>
+	
+	<script type="text/javascript">
+		/**
+			左边导航栏路由
+		 */
+		app.config(function($stateProvider, $urlRouterProvider) {
+			$urlRouterProvider.otherwise("/hotCharts");
+			//$locationProvider.html5Mode(true);
+			$stateProvider.state("bookInfo", {
+				url : "/bookInfo",
+				templateUrl : "modules/tpls/bookInfo.html",
+				controller : "bookInfoCtrl"
+			}).state("userInfo", {
+				url : "/userInfo",
+				templateUrl : "modules/tpls/userInfo.html",
+				controller : "userCtrl"
+			}).state("borrowInfo", {
+				url : "/borrowInfo",
+				templateUrl : "modules/tpls/borrowInfo.html",
+				controller : "borrowInfo"
+			}).state("punish", {
+				url : "/punish",
+				templateUrl : "modules/tpls/punish.html",
+				controller : "punish"
+			}).state("personal", {
+				url : "/personal",
+				templateUrl : "modules/tpls/personal.html",
+				controller : "personal"
+			}).state("personal.borrowrecord", {
+				url : "/borrowrecord",
+				templateUrl : "modules/tpls/personal_borrow.html",
+				controller:"personalBorrow"
+			}).state("personal.history", {
+				url : "/history",
+				templateUrl : "modules/tpls/personal_history.html",
+				controller:"personalHistory"
+			}).state("personal.order",{
+				url:"/order",
+				templateUrl:"modules/tpls/personal_order.html",
+				controller:"personOrder"
+			}).state("personal.bookmiss",{
+				url:"/bookmiss",
+				templateUrl:"modules/tpls/personal_bookmiss.html",
+				controller:"bookmiss"
+			}).state("personal.readermiss",{
+				url:"/readermiss",
+				templateUrl:"modules/tpls/personal_readermiss.html",
+				controller:"readermiss"
+			}).state("personal.saveBook",{
+				url:"/saveBook",
+				templateUrl:"modules/tpls/personal_saveBook.html",
+				controller:"saveBook"
+			}).state("personal.illegal",{
+				url:"/illegal",
+				templateUrl:"modules/tpls/personal_illegal.html",
+				controller:"illegal"
+			}).state("bookEasySearch",{
+				url:"/bookEasySearch",
+				templateUrl:"modules/tpls/bookSearch.html",
+				controller:"bookEasySearch"
+			}).state("detailBookInfo",{
+				url:"/detailBookInfo",
+				params:{bookinfo:null},
+				templateUrl:"modules/tpls/detailBookInfo.html",
+				controller:"detailBookInfo"
+			}).state("hotBorrows",{
+				url:"/hotBorrows",
+				templateUrl:"modules/tpls/hotBorrows.html",
+				controller:"hotBorrows"
+			}).state("hotCommits",{
+				url:"/hotCommits",
+				templateUrl:"modules/tpls/hotCommit.html",
+				controller:"hotCommits"
+			}).state("hotSave",{
+				url:"/hotSave",
+				templateUrl:"modules/tpls/hotSave.html",
+				controller:"hotSave"
+			}).state("classify",{
+				url:"/classify",
+				templateUrl:"modules/tpls/classify.html",
+				controller:"classify"
+			}).state("OrderRelease",{
+				url:"/OrderRelease",
+				templateUrl:"modules/tpls/OrderRelease.html",
+				controller:"OrderRelease"
+			}).state("OverDateRelease",{
+				url:"/OverDateRelease",
+				templateUrl:"modules/tpls/OverDateRelease.html",
+				controller:"OverDateRelease"
+			}).state("OverDatePush",{
+				url:"/OverDatePush",
+				templateUrl:"modules/tpls/OverDatePush.html",
+				controller:"OverDatePush"
+			}).state("reportForm",{
+				url:"/reportForm",
+				templateUrl:"modules/tpls/reportForm.html",
+				controller:"reportForm"
+			}).state("hotCharts",{
+				url:"/hotCharts",
+				templateUrl:"modules/tpls/hotCharts.html",
+				controller:"bookEasySearch"
+			});
+			
+			
+		});
+	</script>
+</body>
+</html>

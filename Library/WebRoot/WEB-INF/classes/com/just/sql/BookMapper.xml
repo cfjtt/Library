@@ -1,0 +1,847 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.just.dao.BookMapperDao">
+	<resultMap type="com.just.bean.SelectAllBookResult" id="findAllBookClass">
+		<result column="firstBookClassId" property="firstBookClassId"></result>
+		<result column="firstBookClassName" property="firstBookClassName"></result>
+		<result column="secondBookClassId" property="secondBookClassId"></result>
+		<result column="secondBookClassName" property="secondBookClassName"></result>
+		<result column="thirdBookClassId" property="thirdBookClassId"></result>
+		<result column="thirdBookClassName" property="thirdBookClassName"></result>
+	</resultMap>
+
+	<!-- 查找图书馆存放所有的位置 -->
+	<select id="getAllSavePlace" resultType="com.just.bean.savePlace">
+		select id,placeName from
+		savePlace
+	</select>
+
+	<!-- 查找所有期刊(图书) -->
+	<select id="findAllBookType" resultType="com.just.bean.BookClassInfo">
+		select id,bookTypeName
+		from bookClassInfo
+	</select>
+	<!-- 查询出所有的二级菜单 -->
+	<select id="findSecondClass" resultType="com.just.bean.secondBookType">
+		select * from secondbooktype
+	</select>
+	<!-- 查询出所有的三级菜单 -->
+	<select id="findThridClass" resultType="com.just.bean.thirdBookType">
+		select * from thirdbooktype;
+	</select>
+	<!-- 查找第一层图书 -->
+	<select id="findFirstBookClass" resultType="com.just.bean.BookType">
+		select
+		distinct
+		bookClassId, bookClass from bookType
+	</select>
+
+	<!-- 根据第一层查找第二层 -->
+	<select id="findSecondBookClass" resultType="com.just.bean.secondBookType"
+		parameterType="int">
+		select distinct secondClassId, secondClassName,bookClassId from
+		secondBookType
+		where bookClassId=#{bookClassId}
+	</select>
+
+	<!-- 根据第一层和第二层查找第三层 -->
+	<select id="findThirdBookClass" resultType="com.just.bean.thirdBookType"
+		parameterType="hashmap">
+		select distinct thirdClassId,thirdClassName from
+		thirdBookType
+		where bookClassId=#{bookClassId} and
+		secondClassId=#{secondClassId}
+	</select>
+
+	<!-- 查找所有图书所有层级匹配的分类 -->
+	<select id="getAllBookClass" resultMap="findAllBookClass">
+		select a.bookClassId as
+		firstBookClassId,
+		a.bookClass as firstBookClassName,
+		b.secondClassId as
+		secondBookClassId,
+		b.secondClassName as secondBookClassName,
+		c.thirdClassId as thirdBookClassId,
+		c.thirdClassName as
+		thirdBookClassName
+		from
+		bookType a,
+		secondBookType b,
+		thirdBookType c
+		where
+		a.bookClassId=b.bookClassId
+		and
+		b.secondClassId=c.secondClassId
+		and
+		b.bookClassId=c.bookClassId
+	</select>
+
+	<!-- 添加图书 -->
+	<insert id="addBook" parameterType="com.just.bean.BookInfo">
+		insert into bookinfo
+		(bookId,bookName,
+		bookClassId,bookTypeId,
+		autor,publishHouse,
+		publishTime,price,
+		borrowTimes,totalNum,
+		availNum,imgPath,
+		description,saveTime,
+		place,addTime)
+		values
+		(#{bookId},#{bookName},
+		#{bookClassId},#{bookTypeId},
+		#{autor},#{publishHouse},
+		#{publishTime},#{price},
+		#{borrowTimes},#{totalNum},
+		#{availNum},#{imgPath},
+		#{description},#{saveTime},
+		#{place},#{addTime})
+	</insert>
+
+	<!-- 简单检索查询图书 -->
+	<select id="easySearch" parameterType="hashmap"
+		resultType="com.just.bean.EasySearchResult">
+		SELECT
+			a.id as id,
+			a.bookId AS bookId,
+			a.bookName AS bookName,
+			a.bookTypeId as bookTypeId,
+			d.bookTypeName as bookTypeName,
+			a.autor AS autor,
+			a.bookClassId as bookClassId,
+			a.publishHouse as publishHouse,
+			a.publishTime as publishTime,
+			a.totalNum as totalNum,
+			a.availNum as availNum ,
+			a.place as place,
+			a.addTime as addTime,
+			c.placeName as placeName,
+			a.description as description,
+			a.price as price,
+			count(b.userid) as evaluationNum,
+			sum(b.star) as star
+		FROM
+			BookInfo a
+		left join
+			evaluation b
+		on
+			a.bookId=b.bookId
+		left join
+			saveplace c
+		on
+			c.id=a.place
+		left join
+			bookClassInfo d
+		on
+			d.id=a.bookTypeId
+		where
+			1=1
+		and
+		<if test="type==1">
+			<if test="condition1=='bookId'">
+				a.bookId like CONCAT(#{condition3},'%' )
+			</if>
+			<if test="condition1=='bookName' ">
+				a.bookName like CONCAT(#{condition3},'%' )
+			</if>
+			<if test="condition1=='autor' ">
+				a.autor like CONCAT(#{condition3},'%' )
+			</if>
+			<if test="condition1=='publishHome'">
+				a.publishHouse like CONCAT(#{condition3},'%' )
+			</if>
+		</if>
+		<if test="type==3">
+			<if test="condition1=='bookId'">
+				a.bookId like CONCAT(CONCAT('%',#{condition3}),'%' )
+			</if>
+			<if test="condition1=='bookName' ">
+				a.bookName like CONCAT(CONCAT('%',#{condition3}),'%' )
+			</if>
+			<if test="condition1=='autor' ">
+				a.autor like CONCAT(CONCAT('%',#{condition3}),'%' )
+			</if>
+			<if test="condition1=='publishHome'">
+				a.publishHouse like CONCAT(CONCAT('%',#{condition3}),'%')
+			</if>
+		</if>
+		<if test="type==2">
+			<if test="condition1=='bookId'">
+				a.bookId =#{condition3}
+			</if>
+			<if test="condition1=='bookName' ">
+				a.bookName =#{condition3}
+			</if>
+			<if test="condition1=='autor' ">
+				a.autor like =#{condition3}
+			</if>
+			<if test="condition1=='publishHome'">
+				a.publishHouse = #{condition3}
+			</if>
+		</if>
+		group by a.id
+		order by a.addTime desc
+		<if test="isLimit!=null">
+		limit #{startPage},#{pageSize}
+		</if>
+	</select>
+
+	<!-- 查找图书总量 -->
+	<select id="findAllBookInfoNum" parameterType="hashmap"
+		resultType="int">
+		SELECT
+		CEIL(COUNT(*) / #{pageSize}) as totalPage
+		FROM
+		BookInfo a
+		left join
+		evaluation b
+		on
+		a.bookId=b.bookId
+		left join
+		saveplace c
+		on
+		c.id=a.place
+		left
+		join
+		bookClassInfo d
+		on
+		d.id=a.bookTypeId
+		where
+		1=1
+		and
+		<if test="type==1">
+			<if test="condition1=='bookId'">
+				a.bookId like CONCAT(#{condition3},'%' )
+			</if>
+			<if test="condition1=='bookName' ">
+				a.bookName like CONCAT(#{condition3},'%' )
+			</if>
+			<if test="condition1=='autor' ">
+				a.autor like CONCAT(#{condition3},'%' )
+			</if>
+			<if test="condition1=='publishHome'">
+				a.publishHouse like CONCAT(#{condition3},'%' )
+			</if>
+		</if>
+		<if test="type==3">
+			<if test="condition1=='bookId'">
+				a.bookId like CONCAT(CONCAT('%',#{condition3}),'%' )
+			</if>
+			<if test="condition1=='bookName' ">
+				a.bookName like CONCAT(CONCAT('%',#{condition3}),'%' )
+			</if>
+			<if test="condition1=='autor' ">
+				a.autor like CONCAT(CONCAT('%',#{condition3}),'%' )
+			</if>
+			<if test="condition1=='publishHome'">
+				a.publishHouse like CONCAT(CONCAT('%',#{condition3}),'%'
+				)
+			</if>
+		</if>
+		<if test="type==2">
+			<if test="condition1=='bookId'">
+				a.bookId =#{condition3}
+			</if>
+			<if test="condition1=='bookName' ">
+				a.bookName =#{condition3}
+			</if>
+			<if test="condition1=='autor' ">
+				a.autor like =#{condition3}
+			</if>
+			<if test="condition1=='publishHome'">
+				a.publishHouse = #{condition3}
+			</if>
+		</if>
+
+	</select>
+	<!-- 删除记录 -->
+	<delete id="deleteBookInfo" parameterType="hashmap">
+		delete from bookInfo
+		where bookId=#{bookId} and bookName=#{bookName} and id=#{id}
+	</delete>
+
+	<!-- 根据传入的菜单Id查找对应的菜单名字 -->
+	<select id="findBookClassIdName" parameterType="hashmap"
+		resultType="com.just.bean.BookAllClassIdAndName">
+		select
+		a.bookClassId as firstClassId,
+		a.bookClass as
+		firstClassName,
+		b.secondClassId,
+		b.secondClassName,
+		c.thirdClassId,
+		c.thirdClassName
+		from
+		bookType a,
+		secondbookType b,
+		thirdbookType c
+		where
+		a.bookClassId=b.bookClassId
+		and
+		b.secondClassId=c.secondClassId
+		and
+		a.bookClassId=c.bookClassId
+		and
+		a.bookClassId=#{firstClassId}
+		and
+		b.secondClassId=#{secondClassId}
+		and
+		c.thirdClassId=#{thirdClassId}
+	</select>
+
+	<!-- 修改数据 -->
+	<update id="modifyBookInfo" parameterType="com.just.bean.BookInfo">
+		update
+		bookinfo
+		set
+		bookId=#{bookId},
+		bookName=#{bookName},
+		bookClassId=#{bookClassId},
+		bookTypeId=#{bookTypeId},
+		autor=#{autor},
+		publishHouse=#{publishHouse},
+		publishTime=#{publishTime},
+		price=#{price},
+		totalNum=#{totalNum},
+		availNum=#{availNum},
+		description=#{description},
+		place=#{place}
+		where
+		id=#{id}
+	</update>
+
+
+
+	<!-- 根据bookId，userid查找当前用于是否已经预约了这本书 -->
+	<select id="checkIsOrder" parameterType="hashmap"
+		resultType="com.just.bean.BorrowRecord">
+		select * from borrowrecord where bookId=#{bookId} and userId=#{userId}
+		<if test="operate!=null">
+			and operate=#{operate}
+		</if>
+	</select>
+
+	<!-- 根据bookId查找出当前书籍的预约信息 -->
+	<select id="findAllBorrowRecord" parameterType="hashmap"
+		resultType="com.just.bean.EasySearchResult">
+		select
+			b.id,
+			a.bookId ,
+			c.loadId,
+			a.bookName,
+			a.totalNum,
+			a.availNum,
+			c.phone,
+			a.autor,
+			a.price,
+			d.placeName as placeName,
+			a.publishHouse,
+			a.publishTime,
+			b.endtime,
+			b.beginTime as
+			startTime,
+			b.operate,
+			c.realName,
+			c.isAvail,
+			c.idcard as idCard
+		from
+			bookInfo a
+		left join
+			borrowRecord b
+		on
+			a.bookId=b.bookId
+		left join
+			userinfo c
+		on
+			b.userid=c.loadId
+		left join
+			saveplace d
+		on
+			a.place=d.id
+		where
+		1=1
+		<if test="bookId!=null">
+			and a.bookId=#{bookId}
+		</if>
+
+		<if test="loadId!=null">
+			and
+			c.loadId=#{loadId}
+		</if>
+		<if test="operate!=null">
+			and
+			b.operate=#{operate}
+		</if>
+		<if test="isLimit!=null">
+			limit #{startPage},#{pageSize}
+		</if>
+	</select>
+
+	<!-- 添加borrowrecord -->
+	<insert id="addBorrowRecord" parameterType="com.just.bean.BorrowRecord">
+		insert borrowrecord
+		(bookid,userid,begintime,endtime,operate,isReBorrow)
+		values
+		(#{bookId},#{userId},#{beginTime},#{endTime},#{operate},#{isReBorrow})
+	</insert>
+
+	<!-- 修改bookInfo表中的borrowTime字段 -->
+	<update id="modifyBorrowTime" parameterType="hashmap">
+		update bookinfo set
+		borrowtimes=borrowtimes+1 where bookId=#{bookId}
+	</update>
+	<!-- 修改bookInfo表中availNum 减少 -->
+	<update id="modifyAvailNumSub" parameterType="string">
+		update bookinfo set availNum=availNum-1 where bookId=#{bookId}
+	</update>
+	
+	<!-- 修改bookInfo表中availNum 增加 -->
+	<update id="modifyAvailNumAdd" parameterType="string">
+		update bookinfo set availNum=availNum+1 where bookId=#{bookId}
+	</update>
+	<!-- 修改borrowRecord表中的operate字段为2 -->
+	<update id="modifyOperate" parameterType="hashmap">
+		update
+		borrowrecord
+		set
+		operate=#{changeOperate}
+		where
+		userid=#{loadId}
+		and
+		bookid=#{bookId}
+		and
+		operate=#{operate}
+		<if test="id!=null">
+			and id=#{id}
+		</if>
+
+	</update>
+
+	<!-- 图书去向(借阅信息,挂失信息) -->
+	<select id="findBookPlace" parameterType="hashmap"
+		resultType="com.just.bean.EasySearchResult">
+		select
+		a.bookId,
+		a.bookName,
+		a.autor,
+		c.loadId,
+		c.realName,
+		b.begintime as
+		startTime,
+		b.endtime,
+		b.operate
+		from
+		bookinfo a
+		left join
+		borrowrecord b
+		on
+		a.bookId=b.bookId
+		left join
+		userinfo c
+		on
+		b.userid=c.loadId
+		where
+		1=1
+		<choose>
+			<when test="condition2==1">
+				<if test="condition1=='bookId'">
+					and a.bookId like CONCAT(#{condition3},'%')
+				</if>
+				<if test="condition1=='bookName'">
+					and a.bookName like CONCAT(#{condition3},'%')
+				</if>
+			</when>
+			<when test="condition2==2">
+				<if test="condition1=='bookId'">
+					and a.bookId = #{condition3}
+				</if>
+				<if test="condition1=='bookName'">
+					and a.bookName = #{condition3}
+				</if>
+			</when>
+			<when test="condition2==3">
+				<if test="condition1=='bookId'">
+					and a.bookId like CONCAT(CONCAT('%',#{condition3}),'%')
+				</if>
+				<if test="condition1=='bookName'">
+					and a.bookName like
+					CONCAT(CONCAT('%',#{condition3}),'%')
+				</if>
+			</when>
+			<otherwise>
+			</otherwise>
+		</choose>
+		<if test="isLimit!=null">
+			limit #{startPage},#{pageSize}
+		</if>
+
+	</select>
+
+	<!-- 续借，修改借阅时间 -->
+	<update id="updateBorrowTime" parameterType="hashmap">
+		update borrowrecord
+		set endtime=#{endtime} where bookid=#{bookId} and userid=#{loadId} and
+		id=#{id} and operate=1
+	</update>
+
+	<!-- 删除预约信息 -->
+	<delete id="deleteOrder" parameterType="hashmap">
+		delete from borrowrecord
+		where bookId=#{bookId} and userid=#{loadId} and id=#{id} and operate=0
+	</delete>
+
+
+	<update id="updateSaveTime" parameterType="string">
+		update bookinfo set savetime=savetime+1  where bookId=#{bookId}
+	</update>
+	<update id="reduceSaveTime" parameterType="string">
+		update bookinfo set savetime=savetime-1  where bookId=#{bookId}
+	</update>
+	<!-- 查找evaluation是否有当前用户 -->
+	<select id="findEvaluation" parameterType="hashmap" resultType="com.just.bean.Evaluation">
+		select * from
+		evaluation where userid=#{loadId} and bookId=#{bookId}
+	</select>
+	
+	<insert id="addEvaluation" parameterType="com.just.bean.Evaluation">
+		insert into
+			evaluation
+				(userId,
+				bookId,
+				description,
+				star,
+				support,
+				against,
+				time
+			)
+		values (
+				#{userId},
+				#{bookId},
+				#{description},
+				#{star},
+				#{support},
+				#{against},
+				#{time}
+		)
+	</insert>
+	
+	<update id="updateEvallucation" parameterType="hashmap">
+		update 
+			evaluation 
+		set 
+			star=#{star} 
+		where 
+			userid=#{loadId} 
+		and 
+			bookId=#{bookId}
+	</update>
+	
+	<update id="updateAllEval" parameterType="com.just.bean.Evaluation">
+		update 
+			evaluation
+		set
+			description=#{description},
+			time=#{time}
+		where
+			userid=#{userId}
+		and
+			bookId=#{bookId}
+	</update>
+	<!-- 查找用于关于某书的评论 -->
+	<select id="findAllCommits" parameterType="string"  resultType="com.just.bean.EasySearchResult">
+		select 
+			a.userid as loadId,
+			a.bookId as bookId,
+			a.description as description,
+			a.time as addTime,
+			b.realName as realName
+			
+		from 
+			evaluation a,
+			userinfo b
+		where
+			a.userid=b.loadid
+		and
+			a.bookId=#{bookId}
+		
+	</select>
+	
+	<!-- 根据时间查找关于书籍总的借阅次数 -->
+	<select id="findBorrowRecordByTime"  parameterType="hashmap"  resultType="com.just.bean.EasySearchResult">
+		select 
+			a.id,
+			a.bookId ,
+			a.bookName,
+			a.autor,
+			a.publishHouse,
+			a.price,
+			a.totalNum,
+			a.availNum,
+			a.description,
+			a.saveTime,
+			a.place,
+			date_format(b.begintime,'%Y') as publishTime,
+			count(1) as borrowTimes
+			
+		from 
+			bookinfo a,
+			borrowrecord b,
+			saveplace c,
+			evaluation d
+		where 
+			a.bookId=b.bookId
+		and
+			a.place=c.id
+		and
+			d.bookid=a.bookid
+		and
+			d.bookid=b.bookid
+		and
+			operate=1
+		<if test="bookId!=null">
+		and
+			a.bookId=#{bookId}
+		</if>
+		group by  date_format(b.begintime,'%Y'),a.bookId
+		
+	</select>
+	
+	<!-- 查询热门借阅,所有书籍以borrowTimes排序 -->
+	<select id="selectBookInfoOrderByBorrowTimes" resultType="com.just.bean.EasySearchResult">
+		select 
+			a.*,
+			b.placeName,
+			count(c.bookId) as evaluationNum,
+			sum(c.star) as star
+		from  
+			bookinfo a
+		left join
+		
+			saveplace b
+		on
+		   a.place=b.id
+		 left join
+		 
+			evaluation c
+		on
+			c.bookid=a.bookid
+		
+		group by a.id
+		order by borrowtimes desc 
+		limit 0,100
+	</select>
+	
+	<!-- 根据第一级菜单，查找出所属的图书,并按borrowTimes排序 -->
+	<select id="selectBookInfoByBookType" resultType="com.just.bean.EasySearchResult" parameterType="string">
+		select 
+			a.*,
+			b.placeName as placeName,
+			count(c.id) as evaluationNum,
+			sum(c.star) as star
+		from 
+			bookinfo a
+		left join
+		
+			saveplace b
+		on
+			a.place=b.id
+		left join
+		
+			evaluation c
+		on
+		   c.bookid=a.bookid
+		where
+			
+			bookClassId like  CONCAT(#{firstClassId},'%') 
+		group by a.id
+		order by borrowtimes desc limit 0,100
+	</select>
+	
+	<!-- 查找出所有的书籍,以图书添加时间排序 -->
+	<select  id="selectBookInfoByClassIdOraddTime" parameterType="hashmap" resultType="com.just.bean.EasySearchResult">
+		select 
+			a.*,
+			b.placeName as placeName,
+			count(c.id) as evaluationNum,
+			sum(c.star) as star
+		from 
+			bookinfo a
+		left join
+			saveplace b
+		on
+			a.place=b.id
+		left join
+			evaluation c
+		on
+			a.bookid=c.bookid
+		where
+			1=1
+		<if test="classId!=null">
+		and
+		  a.bookClassId like  CONCAT(#{classId},'%')	
+		</if>
+		group by a.id
+		order by 
+		addTime
+		<if test="isLimit!=null">
+		limit #{startPage},#{pageSize}
+		</if>
+	</select>
+	<!-- 查找出热门评价 -->
+	<select id="findHotCommits" resultType="com.just.bean.EasySearchResult" parameterType="hashmap">
+		select 
+			a.bookId,
+			a.bookName,
+			a.autor,
+			a.publishHouse,
+			a.publishTime,
+			a.price,
+			a.borrowTimes,
+			a.totalNum,
+			a.availNum,
+			a.description,
+			a.saveTime,
+			c.placeName,
+			a.addTime,
+			count(b.bookId) as evaluationNum,
+			sum(b.star) as  star
+		from 
+			bookInfo a
+		left join
+			evaluation b
+		on
+			a.bookid=b.bookid
+		left join
+			saveplace c
+		on
+			a.place=c.id
+		where
+			1=1
+		<if test="firstClassId!=null">
+		and
+			a.bookClassId  like  
+		CONCAT(#{firstClassId},'%')
+		</if>
+		group by b.bookId
+		order by evaluationNum  desc
+	</select>
+	
+	<!-- 查询出热门收藏 -->
+	<select id="findHotSave" parameterType="hashmap" resultType="com.just.bean.EasySearchResult">
+		select 
+			a.* ,
+			b.placeName as placeName,
+			count(c.userid) as evaluationNum,
+			c.star as star
+		from 
+			bookinfo a
+		left join
+			
+			saveplace b
+		on
+			a.place=b.id
+		left join
+			evaluation c
+		on
+			a.bookid=c.bookid
+		and
+			1=1
+		and
+			a.place=b.id
+		and
+			a.bookid=c.bookid
+		where
+		  1=1
+		<if test="firstClassId!=null">
+		and
+			bookClassId  like  
+		CONCAT(#{firstClassId},'%')
+		</if>
+		group by a.id
+		order by savetime desc
+		
+	</select>
+	
+	<!-- 添加违约记录 -->
+	<insert id="addillegalrecord" parameterType="com.just.bean.IllegalRecord">
+		insert into 
+			illegalrecord (userid,startTime,endTime,type,operate,bookId) 
+		values (#{userId},#{startTime},#{endTime},#{type},#{operate},#{bookId})
+	</insert>
+	<!-- 查找用于的预约的书籍是否可用 -->
+	<select id="findOrderIsAvail" resultType="com.just.bean.EasySearchResult" parameterType="hashmap">
+		SELECT
+			a.*, c.placeName AS placeName,
+			count(d.id) AS evaluationNum,
+			b.begintime AS starttime,
+			sum(d.star) AS star,
+			e.realname
+		FROM
+			borrowrecord b
+			LEFT JOIN bookinfo a ON b.bookid = a.bookid
+			LEFT JOIN saveplace c ON a.place = c.id
+			LEFT JOIN userinfo e ON b.userid = e.loadid
+			LEFT JOIN evaluation d ON b.bookid = d.bookid
+		where
+		    a.availNum > 0
+		AND b.operate = 0
+			<if test="loadId!=null">
+				and b.userid=#{loadId}
+			</if>
+		GROUP BY
+			b.id
+		<if test="isLimit!=null">
+			limit #{startPage},#{pageSize}
+		</if>
+	</select>
+	
+	<!-- 查找各个分类下面有多少本书 -->
+	<select id="findBookNumByClassId" parameterType="string" resultType="int">
+		select count(1) from bookinfo where bookClassId like CONCAT(#{classId},'%')
+	</select>
+	
+	<!-- 判断该用户是否已经收藏过该数 -->
+	<select id="findSaveBook" parameterType="hashmap" resultType="com.just.bean.EasySearchResult">
+		select 
+			a.bookId,
+			a.bookName,
+			a.autor,
+			a.publishHouse,
+			a.publishTime,
+			b.loadId,
+			b.realName,
+			c.saveTime as startTime
+		from 
+			bookinfo a, 
+			userinfo b,
+			saveBook c
+		where 
+			a.bookId=c.bookId
+		and
+			b.loadId=c.userId
+		<if test="userId!=null">
+		and
+			c.userId=#{userId}
+		</if>
+		<if test="bookId!=null">
+		and
+			c.bookId=#{bookId}
+		</if>
+	</select>
+	<!-- 添加收藏记录 -->
+	<insert id="addSaveBook" parameterType="com.just.bean.SaveBook">
+		insert into SaveBook (bookId,userid,saveTime) values (#{bookId},#{userId},#{saveTime})
+	</insert>
+	
+	<!-- 删除收藏记录 -->
+	<delete id="removeSaveBook" parameterType="hashmap">
+		delete from saveBook where bookId=#{bookId} and userid=#{userId}
+	</delete>
+	
+	<!-- 查找当前用户的对某个书籍的评价等级 -->
+	<select id="findOneStars" parameterType="hashmap" resultType="int">
+		select star from evaluation where userid=#{userid} and bookid=#{bookid}
+	</select>
+	
+</mapper>

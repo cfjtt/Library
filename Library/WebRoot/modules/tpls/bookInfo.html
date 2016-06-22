@@ -1,0 +1,434 @@
+<div class="panel panel-danger" id="bookInfo">
+	<div class="panel-heading">图书信息管理</div>
+	<div id="tabs">
+		<ul class=" nav nav-tabs">
+			<li role="presentation" class="active"><a click id="addBook"><span
+					class="glyphicon glyphicon-plus"></span> 添加图书</a></li>
+			<li role="presentation"><a click id="modifyBook"><span
+					class="glyphicon glyphicon-pencil"></span> 查询/修改图书信息</a></li>
+
+			<li role="presentation"><a click id="release"><span
+					class="glyphicon glyphicon-screenshot"></span> 图书去向查询</a></li>
+		</ul>
+	</div>
+	<div class="panel-body" style="padding:0px;">
+		<div ng-show="addBook">
+			<form method="post" role="form" action="" name="form"
+				novalidate="novalidate">
+				<div class="row">
+					<div class="col-md-4 col-md-offset-2 ">
+						<input type="text" class="form-control" placeholder="书名"
+							ng-model="bookName" required name="bookName"> <span
+							class="error"
+							ng-show="form.$dirty&&form.bookName.$error.required"><i
+							class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+					</div>
+					<div class="col-md-4">
+						<input type="text" class="form-control" placeholder="书号"
+							ng-model="bookId" required name="bookId"> <span
+							class="error" ng-show="form.$dirty&&form.bookId.$error.required"><i
+							class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-4 col-md-offset-2">
+						<input type="text" class="form-control" placeholder="作者"
+							ng-model="autor" required name="autor"> <span
+							class="error" ng-show="form.$dirty&&form.autor.$error.required"><i
+							class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+					</div>
+					<div class="col-md-4 ">
+						<input type="text" class="form-control" placeholder="出版社"
+							ng-model="publishHouse" required name="publishHouse"> <span
+							class="error"
+							ng-show="form.$dirty&&form.publishHouse.$error.required"><i
+							class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+					</div>
+
+				</div>
+
+				<div class="row">
+					<div class="col-md-4 col-md-offset-2">
+						<input type="month" class="form-control" placeholder="出版时间"
+							ng-model="publishTime" required name="date"> <span
+							class="error" ng-show="form.$dirty&&form.date.$error.required"><i
+							class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+					</div>
+					<div class="col-md-4">
+						<select class="form-control" ng-model="selectPlace"
+							ng-options="place.placeName for place in placees" required
+							name="place">
+							<option value="">请选择图书位置</option>
+						</select> <span class="error"
+							ng-show="form.$dirty&&form.place.$error.required"><i
+							class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+					</div>
+
+				</div>
+
+				<div class="row">
+					<div class="col-md-2 col-md-offset-2">
+						<select class="form-control" ng-model="selectBookClass"
+							ng-options="book.bookClass for book in bookClasses "
+							ng-change="change('first')" id="first" required
+							name="firstBookId">
+							<option value="">请选择图书类型</option>
+						</select> <span class="error"
+							ng-show="form.$dirty&&form.firstBookId.$error.required"><i
+							class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+					</div>
+					<div class="col-md-2 ">
+						<select class="form-control" ng-model="selectSecondBookClass"
+							ng-options="secondBookClass.secondClassName for secondBookClass in secondBookClasses"
+							ng-change="change('second')" id="second" name="secondBookId"
+							required>
+							<option value="">请选择图书类型</option>
+						</select> <span class="error"
+							ng-show="form.$dirty&&form.secondBookId.$error.required"><i
+							class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+					</div>
+					<div class="col-md-2">
+						<select class="form-control" ng-model="selectThirdBookClass"
+							ng-options="thirdBookClass.thirdClassName for thirdBookClass in thirdBookClasses"
+							id="third" name="thirdBookId" required>
+							<option value="">请选择图书类型</option>
+						</select> <span class="error"
+							ng-show="form.$dirty&&form.thirdBookId.$error.required"><i
+							class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+					</div>
+					<div class="col-md-2 ">
+						<select class="form-control" ng-model="selectBookType" required
+							name="bookType"
+							ng-options="book.bookTypeName for book in bookClassInfo">
+							<option value="">请选择图书类别</option>
+						</select>
+					</div>
+					<span class="error"
+						ng-show="form.$dirty&&form.bookType.$error.required"><i
+						class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+				</div>
+				<div class="row">
+
+					<div class="col-md-3 col-md-offset-2">
+						<input type="number" class="form-control" placeholder="单价"
+							ng-model="price" required name="price"> <span
+							class="error" ng-show="form.$dirty&&form.price.$error.required"><i
+							class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+					</div>
+
+					<div class="col-md-2">
+						<input type="number" class="form-control" placeholder="图书总量"
+							ng-model="totalNum" name="totalNum" required> <span
+							class="error"
+							ng-show="form.$dirty&&form.totalNum.$error.required"><i
+							class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+					</div>
+					<div class="col-md-3">
+						<input type="number" class="form-control" placeholder="可用数量"
+							ng-model="availNum" name="availNum" required> <span
+							class="error"
+							ng-show="form.$dirty&&form.availNum.$error.required"><i
+							class="glyphicon glyphicon-remove" style="color:red"></i>此项为必填项</span>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-8 col-md-offset-2">
+						<script type="text/plain" id="myEditor"
+							style="width:100%;height:300px;display: block" name="content">
+										</script>
+
+					</div>
+				</div>
+				<div class="row" style="margin-top:10px;">
+					<div class="col-md-4 col-md-offset-8">
+						<button class="btn btn-default" type="button"
+							ng-click="addBookInfo()" ng-model="isModify"
+							ng-init="isModify=false">确定</button>
+						<button class="btn btn-default" type="reset">取消</button>
+					</div>
+
+				</div>
+			</form>
+		</div>
+
+		<div ng-show="modifyBook">
+			<div class="row">
+				<div class="col-md-12">
+					<form class="navbar-form navbar-left" role="search" method="post"
+						novalidate="novalidate">
+						<div class="form-group" ng-init="condition1='bookId'">
+							<select class="form-control" ng-model="condition1">
+								<option value="bookId" selected>书号</option>
+								<option value="bookName">图书名字</option>
+								<option value="autor">作者</option>
+								<option value="publishHome">出版社</option>
+							</select>
+						</div>
+						<div class="form-group" ng-init="condition2='1'">
+							<select class="form-control" ng-model="condition2">
+								<option value="1" selected>前方匹配</option>
+								<option value="2">完全匹配</option>
+								<option value="3">任意匹配</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<input type="text" class="form-control" placeholder="请输入查询内容.."
+								name="bookName" ng-model="condition3">
+						</div>
+						<button type="button" class="btn btn-default form-control"
+							ng-click="modifySearch()">查询</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="row table-responsive">
+				<!-- table用来展示总共符合条件的书籍 -->
+				<table class="table table-striped table-hover table-condensed"
+					style="margin-left:15px;">
+					<thread>
+					<tr>
+						<th>序列</th>
+						<th ng-click="col='bookId';desc=!desc">书号<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th ng-click="col='bookName';desc=!desc">书名<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th ng-click="col='autor';desc=!desc">作者<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th ng-click="col='publishHouse';desc=!desc">出版社<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th ng-click="col='publishTime';desc=!desc">出版时间<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th ng-click="col='bookTypeName';desc=!desc">文献类型<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th ng-click="col='placeName';desc=!desc">馆藏位置<span
+							class="glyphicon glyphicon-resize-vertical"></span></th>
+						<th>操作</th>
+					</tr>
+					</thread>
+					<tbody>
+						<tr ng-repeat="item in items |orderBy:col:desc">
+							<td>{{$index+1}}</td>
+							<td>{{item.bookId}}</td>
+							<td>{{item.bookName}}</td>
+							<td>{{item.autor}}</td>
+							<td>{{item.publishHouse}}</td>
+							<td>{{item.publishTime}}</td>
+							<td>{{item.bookTypeName}}</td>
+							<td>{{item.placeName}}</td>
+							<td><span class="glyphicon glyphicon-pencil"></span><a
+								style="color:black" ng-click="modifyBookInfo(item,$index)">修改</a>|<span
+								class="glyphicon glyphicon-trash"></span><a style="color:black"
+								ng-click="deleteBookInfo(item,$index)">删除</a></td>
+						</tr>
+					</tbody>
+
+				</table>
+			</div>
+			<div class="row">
+				<!-- 分页 -->
+				<nav class="navbar-default nav navbar-right" id="tableLimit">
+
+					<ul class="pager" style="margin-right:10px;">
+
+						<li><a style="color:#428bca;font-weight: bold;"
+							ng-click="changePage('up')">上一页</a></li>
+						<li><a style="color:#428bca;font-weight: bold;"><span
+								style="color:red" ng-init="startPage=1;totalPage=1">{{startPage}}</span>/<span
+								style="color:black;">{{totalPage}}</span></a></li>
+						<li><a style="color:#428bca;font-weight: bold;"
+							ng-click="changePage('down')">下一页</a></li>
+						<li><span>到第<input type="number"
+								style="max-width: 40px;max-height: 20px;" ng-blur="changePage('userDefined')"
+								ng-model="defined">页
+						</span></li>
+					</ul>
+
+				</nav>
+			</div>
+
+		</div>
+
+
+		<div ng-show="deleteBook">
+			<div class="row">
+				<div class="col-md-12">
+					<form class="navbar-form navbar-left" role="search" method="post">
+						<div class="form-group">
+							<span>书号: </span><input type="text" class="form-control"
+								style="margin-top:0px;padding:0px;" placeholder=" 书号"
+								name="bookId">
+						</div>
+						<div class="form-group">
+							<span>图书名字: </span><input type="text" class="form-control"
+								style="margin-top:0px;padding:0px;" placeholder=" 图书名字"
+								name="bookName">
+						</div>
+						<button type="submit" class="btn btn-default">查询</button>
+					</form>
+				</div>
+			</div>
+
+			<div class="row">
+				<!-- table用来展示总共符合条件的书籍 -->
+				<table class="table">
+					<tr ng-repeat="item in items ">
+						<td>{{$index+1}}</td>
+						<td>{{item.name}}</td>
+						<td>{{item.name}}</td>
+						<td><span class="glyphicon glyphicon-pencil"></span><a>修改</a></td>
+					</tr>
+				</table>
+			</div>
+			<!-- 点击修改后，展示的详细信息，修改 -->
+			<div></div>
+		</div>
+
+		<div ng-show="release" ng-controller="releaseCtr">
+
+			<div class="row">
+				<ul class=" nav nav-tabs">
+					<li role="presentation" class="active" id="releaseNav"><a
+						click id="all" style="color:black"><span
+							class="glyphicon glyphicon-plus"></span> 查找指定图书去向</a></li>
+					<li role="presentation"><a click id="one" style="color:black"><span
+							class="glyphicon glyphicon-pencil"></span> 查找全部</a></li>
+				</ul>
+			</div>
+
+			<!-- 查看指定图书去向 -->
+			<div ng-show="bookPlace" style="padding:0px;">
+				<div class="row" style="padding:0px;">
+					<div class="col-xs-12">
+						<form class="navbar-form navbar-left" role="search" method="post"
+							novalidate="novalidate" style="margin-top:0px;">
+							<div class="form-group" ng-init="condition1='bookId'">
+								<select class="form-control" ng-model="condition1">
+									<option value="bookId">书号</option>
+									<option value="bookName">图书名字</option>
+								</select>
+							</div>
+							<div class="form-group" ng-init="condition2='1'">
+								<select class="form-control" ng-model="condition2">
+									<option value="1">前方匹配</option>
+									<option value="2">完全匹配</option>
+									<option value="3">任意匹配</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="请输入查询内容.."
+									name="bookName" ng-model="condition3">
+							</div>
+							<button type="button" class="btn btn-default form-control"
+								ng-click="releaseSearch()">查询</button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<!-- 查看全部书籍 -->
+			<div class="row" ng-show="searchAll"></div>
+
+			<!-- 表格展示 -->
+			<div class="row">
+				<div class="col-xs-12">
+					<!-- table用来展示总共符合条件的书籍 -->
+					<table class="table table-striped table-hover table-condensed">
+						<thread>
+						<tr>
+							<th>序列</th>
+							<th ng-click="col='boodId';desc=!desc">索引号<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+							<th ng-click="col='bookName';desc=!desc">书名<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+							<th ng-click="col='autor';desc=!desc">作者<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+							<th ng-click="col='loadId';desc=!desc">借书证<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+							<th ng-click="col='realName';desc=!desc">借阅者<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+							<th ng-click="col='startTime';desc=!desc">借阅时间<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+							<th ng-click="col='endTime';desc=!desc">结束时间<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+							<th ng-click="col='operate';desc=!desc">借阅状态<span
+								class="glyphicon glyphicon-resize-vertical"></span></th>
+						</tr>
+						</thread>
+						<tbody>
+							<tr ng-repeat="item in releaseItems |orderBy:col:desc">
+								<td>{{$index+1}}</td>
+								<td>{{item.bookId}}</td>
+								<td>{{item.bookName}}</td>
+								<td>{{item.autor}}</td>
+								<td>{{item.loadId}}</td>
+								<td>{{item.realName}}</td>
+								<td>{{item.startTime | date:"yyyy-MM"}}</td>
+								<td>{{item.endTime | date:"yyyy-MM"}}</td>
+								<td>{{item.operate ==1 ? "借阅中" : (item.operate==3) ? "书籍挂失"
+									: "在馆" }}</td>
+							</tr>
+						</tbody>
+
+					</table>
+				</div>
+				<div class="row">
+					<!-- 分页 -->
+					<nav class="navbar-default nav navbar-right" id="tableLimit">
+
+						<ul class="pager" style="margin-right:25px;">
+
+							<li><a style="color:#428bca;font-weight: bold;"
+								ng-click="changePage('up')">上一页</a></li>
+							<li><a style="color:#428bca;font-weight: bold;"><span
+									style="color:red" ng-init="startPage=1;totalPage=1">{{startPage}}</span>/<span
+									style="color:black;">{{totalPage}}</span></a></li>
+							<li><a style="color:#428bca;font-weight: bold;"
+								ng-click="changePage('down')">下一页</a></li>
+							<li><span>到第<input type="number"
+									style="max-width: 40px;max-height: 20px;" ng-blur="changePage('userDefined')"
+									ng-model="defined">页
+							</span></li>
+						</ul>
+
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</div>
+
+<!-- 模态框 -->
+<div class="modal fade " id="alert" tabindex="-1" role="dialog"
+	aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">&times;</button>
+
+				<a class="modal-title lead " id="myModalLabel">提示</a>
+
+			</div>
+
+			<div class="modal-body">{{message}}</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" aria-hidden="true"
+					data-dismiss="modal">确定</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+

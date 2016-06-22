@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang='zh-CN' ng-app="myApp" ng-controller="indexCtrl">
+<head>
+<title>图书借阅管理系统</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="modules/css/bootstrap.min.css" />
+<link rel="stylesheet" href="modules/css/library.css" />
+<link rel="stylesheet" href="modules/css/basic.css" />
+<link rel="stylesheet" href="modules/css/font-awesome.css" />
+<link rel="stylesheet" href="modules/css/custom.css" />
+<script type="text/javascript" src="modules/dist/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="modules/dist/bootstrap.min.js"></script>
+<script type="text/javascript" src="modules/dist/angular.min.js"></script>
+</head>
+
+<body>
+	<div class="container-fluid panel" id="container">
+
+		<!-- head -->
+		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation"
+			id="top">
+			<div class="navbar-header header-left">
+				<h4>图书借阅管理系统</h4>
+			</div>
+			<div class="collapse navbar-collapse header-right">
+				<!-- 搜索 -->
+				<ul class="nav navbar-nav">
+					<li><input type="text" class="form-control"
+						placeholder="查找书籍.." id="search"></li>
+					<li><a href="#"
+						style="width:10px;height:10px;padding-left:2px;" id="search">
+							<span class="glyphicon glyphicon-search"
+							style="color:white;padding:0px;"></span>
+					</a></li>
+				</ul>
+
+				<!-- 历史 -->
+				<div class="nav navbar-nav navbar-left" ng-show="show">
+					<span class="glyphicon glyphicon-time " style="color:white"></span>
+					<a class="hover" href="">历史</a>
+					<div class="history"></div>
+				</div>
+				<!-- 收藏 -->
+				<div class="nav navbar-nav navbar-left" ng-show="show">
+					<span class="glyphicon glyphicon-heart-empty " style="color:white"></span>
+					<a class="hover" href="">收藏</a>
+					<div class="save"></div>
+				</div>
+				<!-- 用户 -->
+				<div class="nav navbar-nav navbar-left dropdown" ng-show="show">
+					<a class="dropdown-toggle glyphicon glyphicon-user"
+						data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"
+						id="user" style="color:white"><span for="user">{{name}}</span><span
+						class="glyphicon glyphicon-menu-down"
+						style="color:white;font-size:2px;"></span> </a>
+
+					<ul class="dropdown-menu" aria-labelledby="user">
+						<li role="separator" class="divider"></li>
+						<li><a href="#" class="glyphicon glyphicon-user">个人中心</a></li>
+						<li><a href="#" class="glyphicon glyphicon-envelope ">消息</a></li>
+						<li><a href="#" class="glyphicon glyphicon-log-out "
+							ng-click="exit()">退出</a></li>
+					</ul>
+				</div>
+
+				<!-- 用户未登录 -->
+				<div class="nav navbar-nav navbar-left" ng-show="!show">
+					<span class="glyphicon glyphicon-user" style="color:white"></span>
+					<a class="hover" id="login" data-toggle="modal"
+						data-target="#myModal" ng-click="login()">登录</a> <span>|</span> <a
+						class="hover" id="regist" data-toggle="modal"
+						data-target="#myModal" ng-click="regist()">注册</a>
+				</div>
+			</div>
+
+		</nav>
+
+		<!-- 左边导航栏 -->
+		<nav class="navbar-default navbar-side" role="navigation" id="left">
+			<div class="collapse sidebar-collapse">
+				<ul class="nav" id="main-menu">
+					<li><a href="#"> <i class="glyphicon glyphicon-search"></i>书目检索<span
+							class="glyphicon glyphicon-menu-down"></span>
+					</a>
+						<ul class="nav nav-second-level collapse">
+							<li><a href="#"><i class="glyphicon glyphicon-eye-open"></i>简单检索</a></li>
+							<li><a href="#"><i class="glyphicon glyphicon-cd"></i>多字段检索</a>
+							</li>
+							<li><a href=""><i class="glyphicon glyphicon-globe"></i>全文检索</a>
+							</li>
+							
+						</ul></li>
+					<li><a href="#"> <i class="glyphicon glyphicon-search"></i>热门排行<span
+							class="glyphicon glyphicon-menu-down"></span></a>
+						<ul class="nav nav-second-level collapse">
+							<li><a href=""><i class="glyphicon glyphicon-stats"></i>热门借阅</a></li>
+							<li><a href=""><i class="glyphicon glyphicon-edit"></i>热门评价</a></li>
+							<li><a href=""><i class="glyphicon glyphicon-star-empty"></i>热门收藏</a></li>
+							<li><a href=""><i class="glyphicon glyphicon-book"></i>热门图书</a></li>
+						</ul></li>
+					<li><a href="#"><i class="glyphicon glyphicon-th-list"></i>分类浏览
+					</a></li>
+					<li><a href="#"> <i
+							class="glyphicon glyphicon-indent-left"></i>期刊导航
+					</a></li>
+					<li><a href=""><i class="glyphicon glyphicon-earphone"></i>新书通告</a></li>
+					<li><a href="#"><i class="glyphicon glyphicon-send"></i>信息发布<span
+							class="glyphicon glyphicon-menu-down"></span></a>
+						<ul class="nav nav-second-level">
+							<li><a href=""><i
+									class="glyphicon glyphicon-modal-window"></i>预约到书</a></li>
+							<li><a href=""><i class="glyphicon glyphicon-copy"></i>委托到书</a></li>
+							<li><a href=""><i class="glyphicon glyphicon-alert"></i>超期欠款</a></li>
+							<li><a href=""><i
+									class="glyphicon glyphicon-exclamation-sign"></i>超期催还</a></li>
+						</ul></li>
+					<li><a href=""><i class="glyphicon glyphicon-thumbs-up"></i>读者荐购</a></li>
+					<li><a href=""><i class="glyphicon glyphicon-user"></i>我的图书馆</a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+
+
+	<!-- 模态框 -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&times;</button>
+					<a class="modal-title lead " id="myModalLabel">{{operation}}</a>
+				</div>
+				<div class="modal-body">
+					<div ng-show="showlogin">
+						<div class="input-group">
+							<input type="number" class="form-control" placeholder="证件号"
+								ng-model="userinfo.loadId" style="width: 280px;" />
+						</div>
+						<div class="input-group">
+							<input type="password" class="form-control" placeholder="密码"
+								ng-model="userinfo.password" style="width: 280px;" />
+						</div>
+
+					</div>
+					<div ng-show="showregist">
+						<div class="input-group">
+							<input type="number" class="form-control" placeholder="证件号"
+								ng-model="userinfo.load" style="width: 280px;" />
+
+						</div>
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="用户名"
+								ng-model="userinfo.username" style="width: 280px;" />
+						</div>
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="真实姓名"
+								ng-model="userinfo.realname" style="width: 280px;" />
+						</div>
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="身份证"
+								ng-model="userinfo.IdCard" style="width: 280px;" />
+						</div>
+						<div class="input-group">
+							<input type="number" class="form-control" placeholder="手机号码"
+								ng-model="userinfo.telphone" style="width: 280px;" />
+						</div>
+						<div class="input-group">
+							<input type="password" class="form-control" placeholder="密码"
+								ng-model="userinfo.pwd" style="width: 280px;" />
+						</div>
+						<div class="input-group">
+							<input type="password" class="form-control" placeholder="确认密码"
+								ng-model="userinfo.againpassword" style="width: 280px;" />
+						</div>
+
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary" ng-click="sure()">
+						{{operation}}</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript" src="modules/dist/jquery.metisMenu.js"></script>
+	<script type="text/javascript" src="modules/dist/custom.js"></script>
+	<script type="text/javascript">
+		var app = angular.module("myApp", []);
+		app.controller("indexCtrl", function($scope, $http, $window) {
+
+			if ($window.sessionStorage.getItem("name") != null) {
+				$scope.show = true;
+				$scope.name = $window.sessionStorage.getItem("name");
+			} else {
+				$scope.show = false;
+			}
+
+			$scope.login = function() {
+				$scope.operation = "登录";
+				$scope.showregist = false;
+				$scope.showlogin = true;
+			}
+			$scope.regist = function() {
+				$scope.operation = "注册";
+				$scope.showlogin = false;
+				$scope.showregist = true;
+			}
+
+			/**登录注册操作*/
+			$scope.sure = function() {
+				var data = {};
+				var loadId = $scope.userinfo.loadId;
+				var password = $scope.userinfo.password;
+				var userName = $scope.userinfo.username;
+				var realName = $scope.userinfo.realname;
+				var idCard = $scope.userinfo.IdCard;
+				var phone = $scope.userinfo.telphone;
+				var againpassword = $scope.userinfo.againpassword;
+				if ($scope.operation == "登录") {
+					data = {
+						"loadId" : loadId,
+						"password" : password
+					};
+				} else if ($scope.operation == "注册") {
+					data = {
+						"loadId" : $scope.userinfo.load,
+						"password" : $scope.userinfo.pwd,
+						"userName" : userName,
+						"realName" : realName,
+						"idCard" : idCard,
+						"phone" : phone,
+						"againpassword" : againpassword
+					};
+				}
+
+				$http(
+						{
+							method : "post",
+							url : "/Library/"
+									+ (($scope.operation == "登录") ? "login.do"
+											: "regist.do"),
+							params : data,
+							dataType : "json"
+						}).success(
+						function(data) {
+							if (data.flag) {
+								$("#myModal").modal("hide");
+								$window.sessionStorage.setItem("name",
+										data.result.userName);
+								$window.sessionStorage.setItem("root",
+										data.result.root);
+								$scope.show = true;
+								$scope.name = data.result.userName;
+
+							} else {
+								alert(data.message);
+							}
+						}).error(function() {
+					console.log("aa");
+				});
+			}
+
+			/**退出操作*/
+			$scope.exit = function() {
+				$window.sessionStorage.clear();
+				//$window.sessionStorage.setItem("root",data.result.root);
+				$scope.show = false;
+				$scope.name = data.result.userName;
+			}
+		});
+	</script>
+</body>
+</html>

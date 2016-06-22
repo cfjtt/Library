@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>分类浏览</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+   	 <div class="panel panel-danger">
+   	 	 <div class="panel-heading">分类浏览</div>
+   	 	 <div class="panel-body" style="padding:0px;">
+   	 	 	<div class="row">
+   	 	 		<div class="col-xs-3" style="overflow: auto;padding-right:0px;">
+   	 	 			<ul id="tree" ng-init="showSecondClass=true;showThirdClass=true;" style="padding-left:0px;padding-right:0px;border:1px solid #ebccd1">
+   	 	 				<li ng-repeat="firstClass in firstClasses">
+   	 	 					<span class="{{showSecondClass ? 'glyphicon glyphicon-plus' : 'glyphicon glyphicon-minus'}}" ng-click="showSecondClass=!showSecondClass"></span>&nbsp;<span  ng-click="selectBySort(firstClass.bookClassId)">{{firstClass.bookClass}}</span>
+   	 	 					<ul ng-show="!showSecondClass">
+   	 	 						<li ng-repeat="secondClass in secondClasses | filter:{bookClassId:firstClass.bookClassId}" >
+   	 	 							<span class="{{showThirdClass ? 'glyphicon glyphicon-plus' : 'glyphicon glyphicon-minus'}}" ng-click="showThirdClass=!showThirdClass"></span><span ng-click="selectBySort(firstClass.bookClassId,secondClass.secondClassId)">{{secondClass.secondClassName}}</span>
+   	 	 							<ul ng-show="!showThirdClass">
+   	 	 								<li ng-repeat="thirdClass in thirdClasses | filter:{bookClassId:secondClass.bookClassId,secondClassId:secondClass.secondClassId}">
+   	 	 									<span  ng-click="selectBySort(firstClass.bookClassId,secondClass.secondClassId,thirdClass.thirdClassId)">{{thirdClass.thirdClassName}}</span>
+   	 	 								</li>
+   	 	 							</ul>
+   	 	 						</li>
+   	 	 					</ul>
+   	 	 				</li>
+   	 	 			</ul>
+   	 	 		</div>
+   	 	 		
+   	 	 		
+   	 	 		<div class="col-xs-9" style="padding-left:0px;">
+   	 	 			<div class="row" ng-show="items.length>0">
+						<div class="col-xs-3">
+							<input type="text" ng-model="test"  class="form-control" placeholder="在结果中查找" style="margin-top:5px;">
+						</div>
+					</div>
+   	 	 			<ul class="list-group">
+   	 	 				<li class="list-group-item" style="border:1px solid #ebccd1;"
+									ng-repeat="item in items | filter:test">
+							<h4 class="list-group-item-heading">
+								<a ui-sref="detailBookInfo({bookinfo:item})"  style="color:blue;" ui-sref-opts="{reload:true}">{{item.bookName}}</a><span
+										style="font-size:13px;"> {{item.bookId}}</span>
+							</h4>
+							<div class="row">
+								<div class="col-xs-4">
+									<p class="list-group-item-text">&nbsp;&nbsp;{{item.autor}}著   {{item.publishHouse}} {{item.publishTime}}</p>
+								</div>
+								<div class="col-xs-2 col-xs-offset-6" style="text-align:right;">
+									<p class="list-group-item-text">馆藏/可借:{{item.totalNum}}/{{item.availNum}}</p>
+								</div>
+							</div>		
+						</li>
+   	 	 			</ul>
+   	 	 			
+   	 	 		</div>
+   	 	 	</div>
+   	 	 	
+   	 	 	<!-- 分页 -->
+			<div class="row" ng-show="totalPage>1" style="margin-right:10px;" >
+				<!-- 分页 -->
+				<nav class="navbar-default nav navbar-right" id="tableLimit">
+
+					<ul class="pager">
+
+						<li><a style="color:#428bca;font-weight: bold;"
+							ng-click="changePage('up')">上一页</a></li>
+						<li><a style="color:#428bca;font-weight: bold;"><span
+								style="color:red" ng-init="startPage=1;totalPage=1">{{startPage}}</span>/<span
+								style="color:black;">{{totalPage}}</span></a></li>
+						<li><a style="color:#428bca;font-weight: bold;"
+							ng-click="changePage('down')">下一页</a></li>
+						<li><span>到第<input type="number"
+								style="max-width: 40px; max-height: 20px;" ng-blur="changePage('userDefined')"
+								ng-model="defined">页
+						</span></li>
+					</ul>
+
+				</nav>
+			</div>
+   	 	 </div>
+   	 </div>
+   
+  </body>
+</html>

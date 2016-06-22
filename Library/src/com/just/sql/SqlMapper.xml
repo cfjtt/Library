@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.just.dao.UserMapperDao">
+
+	<select id="findByLoadId" parameterType="hashmap" resultType="com.just.bean.UserInfo">
+		select * from userinfo where loadid=#{loadId} and password=#{password}
+	</select>
+
+	<select id="findLoadIdIsExit" parameterType="string" resultType="int">
+		select count(1) from userinfo where loadid=#{loadId}
+	</select>
+
+	<select id="findUserInfoByLoadId" parameterType="string"
+		resultType="com.just.bean.UserInfo">
+		select * from userinfo where loadId=#{loadId}
+	</select>
+
+	<insert id="addUsers" parameterType="com.just.bean.UserInfo">
+		insert into userinfo
+		(loadid,username,realname,root,password,phone,idcard,isMiss,isAvail)
+		values
+		(#{loadId},#{userName},#{realName},#{root},#{password},#{phone},#{idCard},#{isMiss},#{isAvail})
+	</insert>
+
+	<!-- 查找全部用户 -->
+	<select id="findAllUser" resultType="com.just.bean.UserInfo"
+		parameterType="hashmap">
+		select * from userinfo where root !=0
+		
+		<if test="root!='AllUser'">
+			and root=#{root}
+		</if>
+		<if test="condition=='loadId'">
+			and loadId=#{value}
+		</if>
+		<if test="condition=='realName'">
+			and realName=#{value}
+		</if>
+		order by root
+		<if test="type==0">
+			limit #{startPage},#{pageSize}
+		</if>
+		
+	</select>
+
+
+	<!-- 删除用户 -->
+	<delete id="deleteUserInfo" parameterType="int">
+		delete from userinfo
+		where id=#{id}
+	</delete>
+
+	<!-- 修改用户 -->
+	<update id="modifyUserInfo" parameterType="hashmap">
+		update
+		userinfo
+		set
+		loadId=#{loadId},
+		realName=#{realName},
+		phone=#{phone},
+		root=#{root},
+		isAvail=#{isAvail}
+		where
+		id=#{id}
+	</update>
+
+	<!-- 根据用户id,图书id查询用户是否违规 -->
+	<select id="findIsIllegal" parameterType="hashmap">
+		select
+		a.loadId,a.realName,a.isAvail,b.endtime,b.begintime,c.bookId,c.bookName
+		from userinfo a,
+		borrowrecord b,bookinfo c where a.loadId=b.loadId and
+		b.userid=c.loadId and a.loadId=#{loadId} and c.bookId=#{bookId} 
+	</select>
+	
+	<!-- 更新userinfo表将图像的路径写入到数据库中 -->
+	<update id="updateImage" parameterType="hashmap">
+		update userinfo set imgPath=#{imgPath} where id=#{id} and loadId=#{loadId}
+	</update>
+	
+	<!-- 修改密码 /修改其他信息-->
+	<update id="updateUserMsg" parameterType="com.just.bean.UserInfo">
+		update 
+			userinfo 
+		set 
+			<if test="password!=null">
+			password=#{password} 
+			</if>
+			<if test="password==null">
+			username=#{userName},
+			phone=#{phone},
+			idCard=#{idCard},
+			email=#{email}
+			</if>
+		where 
+			loadId=#{loadId}
+	</update>
+	
+	<!-- 根据传入的loadId,修改此isAvail为1 -->
+	<update id="updateIsAvail" parameterType="hashmap">
+		update userinfo set isAvail=#{isAvail} where loadId=#{loadId}
+	</update>
+	
+	<!-- 根据loadId查找出所有的违规记录 -->
+	<select id="findAllIllegal" parameterType="string"
+		resultType="com.just.bean.EasySearchResult">
+		select
+			a.bookId as bookId,
+			a.bookName as bookName,
+			a.autor as autor,
+			a.publishHouse as publishHouse,
+			a.place as place,
+			b.placeName as placeName,
+			c.type as operate ,
+			c.startTime as startTime,
+			c.endTime as endTime,
+			d.loadId  as loadId
+		from 
+			bookinfo a,
+			saveplace b,
+			illegalrecord c,
+			userinfo d 
+		where 
+			c.bookId=a.bookId 
+		and
+			a.place=b.id 
+		and 
+			c.userid=d.loadId
+		and
+			c.userid=#{loadId}
+		
+	</select>
+</mapper>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>报表管理</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="content-type" content="text/html; charset=UTF-8">
+  </head>
+  
+  <body>
+     <div class="panel panel-danger">
+     	<div class="panel-heading">报表统计</div>
+     	<div id="tabs">
+			<ul class=" nav nav-tabs">
+				<li role="presentation" class="active" ><a click id="chartUser"><span
+						class="glyphicon glyphicon-user"></span> 读者统计表</a></li>
+				<li role="presentation"><a click id="chartScale"><span
+						class="glyphicon glyphicon-stats"></span> 馆藏分类比例</a></li>
+				<li role="presentation"><a click id="chartReturn"><span
+						class="glyphicon glyphicon-bell"></span> 催还统计表</a></li>
+				<li role="presentation"><a click id="chartMiss"><span
+						class="glyphicon glyphicon-question-sign"></span> 图书遗失报表</a></li>
+				<li role="presentation"><a click id="chartPay"><span
+						class="glyphicon glyphicon-credit-card"></span> 赔偿统计表</a></li>
+			</ul>
+		</div>
+		
+		<!-- 读者统计表 -->
+		<div class="row" ng-show="chartUser" ng-init="chartUser=true">
+			<div class="col-xs-12">
+				<form class="navbar-form navbar-left" role="search" method="post"
+						novalidate="novalidate" enctype="multipart/form-data">
+						
+						<div class="form-group" >
+							<button type="button" class="btn btn-default form-control" ng-click="downUserInfo(1)">
+								下载读者信息
+							</button>
+						</div>
+						<div class="form-group">
+							<button type="button" class="btn btn-default form-control" ng-click="downUserInfo(0)">
+								下载模版
+							</button>
+						</div>
+						<div class="form-group">
+							<input id="file" type="file" multiple class="file" ng-model="path"
+							data-overwrite-initial="false" data-min-file-count="1">
+						</div>
+					</form>
+			</div>
+			<div class="row">
+				<div class="col-xs-12" style="min-height: 200px;border:1px solid #ebccd1;">
+					<p id="message" style="margin-left:20px;"></p>
+				</div>
+			</div>
+		</div>
+		
+		<!-- 馆藏分类比例 -->
+		<div class="row" ng-show="chartScale">
+			<div class="col-xs-7">
+					<div id="charts">
+				
+				</div>
+			</div>
+			
+			<div class="col-xs-5">
+				<div id="secondCharts" >
+				
+				</div>
+			</div>
+			
+			
+		</div>
+		
+		<!-- 催还统计表 -->
+		<div class="row" ng-show="chartReturn">
+			<div class="row">
+				<div class="col-xs-2 col-xs-offset-1">
+					<div class="form-group">
+						<button type="button" class="form-control" ng-click="downReturn()">下载报表</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- 图书遗失报表 -->
+		<div class="row" ng-show="chartMiss">
+			<div class="row">
+				<div class="col-xs-2 col-xs-offset-1">
+					<div class="form-group">
+						<button type="button" class="form-control" ng-click="downMiss()">下载报表</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- 赔偿统计表 -->
+		<div class="row" ng-show="chartPay">
+			<div class="row">
+				<div class="col-xs-2 col-xs-offset-1">
+					<div class="form-group">
+						<button type="button" class="form-control" ng-click="downPay()">下载报表</button>
+					</div>
+				</div>
+			</div>
+		</div>
+     </div>
+     <script>
+		var ops = {
+			language : 'zh', //设置语言
+			uploadUrl : "/Library/parseExcel.do", //上传的地址
+			maxFileCount : 100,
+			//fileType: "any",
+			allowedFileExtensions : [ 'xls', 'xlsx' ],
+			enctype : 'multipart/form-data',
+			showPreview : false,
+			overwriteInitial: false,
+			showUpload : true, //是否显示上传按钮
+			showCaption : true,//是否显示标题
+			browseClass : "btn btn-primary form-control", //按钮样式        
+			uploadClass:"btn btn-default form-control",
+			previewFileIcon : "<i class='glyphicon glyphicon-king'></i>",
+			msgFilesTooMany : "选择上传的文件数量({n}) 超过允许的最大数值{m}！",
+			slugCallback : function(filename) {
+				return filename.replace('(', '_').replace(']', '_');
+			}
+
+		};
+		//第一次初始化
+		$("#file").fileinput(ops);
+		$("#file").on("filebatchuploadsuccess", function(event, data,
+				previewId, index) {
+			$("#message").html(data.response.message);
+		});
+	</script>
+  </body>
+</html>
